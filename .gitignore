@@ -1,0 +1,4 @@
+*~
+node_modules
+conf/providers.json
+conf/providers-client.json
