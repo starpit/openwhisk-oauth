@@ -1,0 +1,16 @@
+{
+    "github": {
+	"authorization_endpoint": "https://github.com/login/oauth/authorize",
+	"credentials": {
+	    "client_id": "xxxxxxxxx"
+	}
+    },
+    
+    "google": {
+	"authorization_endpoint": "https://accounts.google.com/o/oauth2/v2/auth",
+	"authorization_endpoint_query": "&response_type=code&scope=email",
+	"credentials": {
+	    "client_id": "xxxxxxxxx"
+	}
+    }
+}

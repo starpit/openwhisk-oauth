@@ -1,0 +1,30 @@
+{
+    "github": {
+	"authorization_endpoint": "https://github.com/login/oauth/authorize",
+	"token_endpoint": "https://github.com/login/oauth/access_token",
+	"userinfo_endpoint": "https://api.github.com/user",
+
+	"token_endpoint_form_is_json": true,
+	"userinfo_identifier": "login",
+	
+	"credentials": {
+	    "client_id": "xxxxxxxxx",
+	    "client_secret": "xxxxxxxxx"
+	}
+    },
+    
+    "google": {
+	"authorization_endpoint": "https://accounts.google.com/o/oauth2/v2/auth",
+	"token_endpoint": "https://www.googleapis.com/oauth2/v4/token",
+	"userinfo_endpoint": "https://www.googleapis.com/oauth2/v3/userinfo",
+
+	"authorization_type": "Bearer",
+	"token_endpoint_form": { "grant_type": "authorization_code", "redirect_uri": "http://localhost:15231" },
+	"userinfo_identifier": "email",
+	
+	"credentials": {
+	    "client_id": "xxxxxxxxx",
+	    "client_secret": "xxxxxxxxx"
+	}
+    }
+}
