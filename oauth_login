@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 
 //
-// the is for demo purposes
+// the is for demo purposes: open a browser to initiate an oauth token
+// acquisition
 //
 var providerName = process.argv[2] || "github";
-require('./lib/oauth_login').doLoginWithProvider(providerName);
+require('./lib/oauth_login').loginViaBrowser(providerName);
 
