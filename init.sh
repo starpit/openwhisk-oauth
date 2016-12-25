@@ -15,7 +15,8 @@ for dir in actions/*/; do
     wsk action delete "${PACKAGE}/${action}" 2>&1 | grep -v "resource does not exist"
     (cd $dir \
 	    && echo "${PACKAGE}/${action}" \
-	    && wsk action create --kind nodejs:6 "${PACKAGE}/${action}" ${action}.js;)
+	    && wsk action create --kind nodejs:6 "${PACKAGE}/${action}" ${action}.js
+    )
 
     # see if the action needs the full credentials (i.e. including login credentials)
 #    if [ -f "$dir/config.json" ]; then

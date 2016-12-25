@@ -22,7 +22,8 @@ function main(params) {
 	// here is the oauth code the client gave us
 	var code = params.code;
     
-	var providerName = params.provider;
+	var providerName = params.provider || params.state;
+	console.log(`providerName=${providerName}`);
 	var provider = providers[providerName];
 
 	//
