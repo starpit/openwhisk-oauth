@@ -2,7 +2,10 @@
   "name": "",
   "version": "",
   "dependencies": {
+    "expand-home-dir": "0.0.3",
     "open": "0.0.5",
+    "openwhisk": "^3.2.1",
+    "properties-parser": "^0.3.1",
     "request": "^2.74.0"
   }
 }
