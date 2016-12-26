@@ -11,9 +11,16 @@ Make sure to use http://localhost:15231 as the redirect_uri when setting up the 
 
 # Demo usage
 
-```
-% node fake_backend &
-Hi, I'm the fake OpenWhisk backend
+First, create the backend assets, by executing the script
+`init.sh`. Then, you can test that this all works by executing the
+`./bin/login` script.
 
-% node fake_wsk google
+```
+% ./init.sh
+% ./bin/login github
+{
+    "providerName": "github",
+    "id": "starpit"
+}
+ok
 ```
