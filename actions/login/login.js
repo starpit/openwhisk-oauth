@@ -20,9 +20,16 @@ function main(params) {
 	const providers = params.providers;
     
 	// here is the oauth code the client gave us
-	var code = params.code;
-    
-	var providerName = params.provider || params.state;
+	const code = params.code;
+
+	let state;
+	try {
+	    state = JSON.parse(params.state)
+	} catch (e) {
+	    console.log('Error parsing state', state)
+	}
+	
+	var providerName = params.provider || state.providerName;
 	console.log(`providerName=${providerName}`);
 	var provider = providers[providerName];
 
@@ -69,7 +76,7 @@ function main(params) {
 		//
 		// all right, we now have an access_token
 		//
-		if (typeof body == "string") {
+		if (typeof body == 'string') {
 		    body = JSON.parse(body);
 		}
 	    
@@ -84,21 +91,22 @@ function main(params) {
 		    headers: {
 			'Accept': 'application/json',
 			'Authorization': (provider.authorization_type || 'token') + ' ' + body.access_token,
-			"User-Agent": "OpenWhisk"
+			'User-Agent': 'OpenWhisk'
 		    }
 		}, function(err2, response2, body2) {
 		    if (err2) {
-			console.log("ERR2 " + JSON.stringify(err2));
+			console.log('ERR2', err2);
 			reject(err2);
 		    } else {
 			//
 			// great, now we have the profile!
 			//
-			if (typeof body2 == "string") {
+			if (typeof body2 == 'string') {
 			    body2 = JSON.parse(body2);
 			}
 
 			resolve({
+			    tid: state && state.tid, // transaction id, so the client knows when we're done
 			    providerName: providerName,
 			    id: body2[provider.userinfo_identifier]
 			});
