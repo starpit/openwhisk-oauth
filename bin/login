@@ -5,5 +5,5 @@
 // acquisition
 //
 var providerName = process.argv[2] || "github";
-require('./lib/oauth_login').loginViaBrowser(providerName);
+require('../lib/client').loginViaBrowser(providerName);
 
