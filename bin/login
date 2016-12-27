@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// -*- mode: javascript -*-
 
 //
 // the is for demo purposes: open a browser to initiate an oauth token
