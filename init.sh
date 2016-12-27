@@ -2,12 +2,14 @@
 
 . ./conf/config.sh
 
-action=login
-
 npm install >& /dev/null
 
+#
+# set up the package and the login action
+#
 wsk package create "${PACKAGE}" 2>&1 | grep -v "resource already exists"
-wsk action delete "${PACKAGE}/${action}" 2>&1 | grep -v "resource does not exist"
+action=login
+wsk action delete "${PACKAGE}/${action}" 2>&1 | grep -v "resource does not exist";
 wsk action create --kind nodejs:6 "${PACKAGE}/${action}" actions/${action}/${action}.js
 
 # have we already done the initial setup?
@@ -18,16 +20,23 @@ if [ $? == 1 ]; then
     ./bin/setup-providers
 fi
 
+#
 # Update the package with the providers configuration
+#
 PROVIDERS=`cat conf/providers.json`
 wsk package update "${PACKAGE}" -p providers "${PROVIDERS}"
 
 
-
-
-#for dir in actions/*/; do
-#    action=$(basename "$dir")
-#    wsk action delete "${PACKAGE}/${action}" 2>&1 | grep -v "resource does not exist"
-#    (cd $dir && wsk action create --kind nodejs:6 "${PACKAGE}/${action}" ${action}.js
-#    )
-#done
+#
+# create the rest of the actions
+#
+#   note: we already dealt with login specially, because of the chicken
+#         and egg problem of setting up the redirect_uri
+#
+for dir in actions/*/; do
+    action=$(basename "$dir")
+    if [ "${action}" != "login" ]; then
+       wsk action delete "${PACKAGE}/${action}" 2>&1 | grep -v "resource does not exist"
+       wsk action create --kind nodejs:6 "${PACKAGE}/${action}" "${dir}/${action}.js"
+    fi
+done
