@@ -1,10 +1,4 @@
-var path = require('path'),
-    fs = require('fs'),
-    request = require('request');
-
-// config information about the providers
-// todo fetch the google three fields from https://accounts.google.com/.well-known/openid-configuration
-//var providers = JSON.parse(fs.readFileSync(path.join(__dirname, '../conf/providers.json'), 'utf8'));
+var request = require('request');
 
 /**
  * Listen for requests for oauth logins from the clients
@@ -29,7 +23,7 @@ function main(params) {
 	    console.log('Error parsing state', state)
 	}
 	
-	var providerName = params.provider || state.providerName;
+	var providerName = params.provider || params.providerName || state.providerName;
 	console.log(`providerName=${providerName}`);
 	var provider = providers[providerName];
 
@@ -110,9 +104,9 @@ function main(params) {
 			resolve({
 			    tid: state && state.tid, // transaction id, so the client knows when we're done
 			    
-			    providerName: providerName,
-			    id: body2[provider.userinfo_identifier],
-			    access_token: body.access_token
+			    provider: providerName,
+			    access_token: body.access_token,
+			    id: body2[provider.userinfo_identifier]
 			});
 		    }
 		});
