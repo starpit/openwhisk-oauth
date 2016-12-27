@@ -19,10 +19,11 @@ function main(params) {
 		'Authorization': (provider.authorization_type || 'token') + ' ' + params.access_token,
 		'User-Agent': 'OpenWhisk'
 	    }
-	}, function(err2, response2, body2) {
-	    if (err2) {
-		console.error(JSON.stringify(err2))
-		reject(err2)
+	}, function(err, response, body) {
+	    if (err || response.statusCode != 200) {
+		const rejectionMessage = err ? JSON.stringify(err) : JSON.stringify(response)
+		console.error(rejectionMessage)
+		reject(rejectionMessage)
 
 	    } else {
 		delete params.provider
