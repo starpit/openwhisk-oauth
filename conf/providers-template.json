@@ -1,9 +1,11 @@
 {
     "github": {
-	"new_oauth_app": "https://github.com/settings/applications/new",
-	"authorization_endpoint": "https://github.com/login/oauth/authorize",
-	"token_endpoint": "https://github.com/login/oauth/access_token",
-	"userinfo_endpoint": "https://api.github.com/user",
+	"endpoints": {
+	    "new_oauth_app": "https://github.com/settings/applications/new",
+	    "authorization": "https://github.com/login/oauth/authorize",
+	    "token": "https://github.com/login/oauth/access_token",
+	    "userinfo": "https://api.github.com/user"
+	},
 
 	"token_endpoint_form_is_json": true,
 	"userinfo_identifier": "login",
@@ -15,10 +17,12 @@
     },
     
     "google": {
-	"new_oauth_app": "https://console.developers.google.com/apis/credentials",
-	"authorization_endpoint": "https://accounts.google.com/o/oauth2/v2/auth",
-	"token_endpoint": "https://www.googleapis.com/oauth2/v4/token",
-	"userinfo_endpoint": "https://www.googleapis.com/oauth2/v3/userinfo",
+	"endpoints": {
+	    "new_oauth_app": "https://console.developers.google.com/apis/credentials",
+	    "authorization": "https://accounts.google.com/o/oauth2/v2/auth",
+	    "token": "https://www.googleapis.com/oauth2/v4/token",
+	    "userinfo": "https://www.googleapis.com/oauth2/v3/userinfo"
+	},
 
 	"authorization_type": "Bearer",
 	"token_endpoint_form": { "grant_type": "authorization_code", "redirect_uri": "http://localhost:15231" },

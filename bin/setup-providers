@@ -23,7 +23,7 @@ const ask = (providerName, provider) => L => {
 	message: 'Set up an oauth application with ' + providerName.red + '?'
     }]).then(answers => new Promise((resolve, reject) => {
 	if (answers.ok) {
-	    open(provider.new_oauth_app)
+	    open(provider.endpoints.new_oauth_app)
 	    inquirer.prompt([
 		{ name: 'client_id', message: 'Enter your client_id', type: 'input' },
 		{ name: 'client_secret', message: 'Enter your client_secret', type: 'input' }

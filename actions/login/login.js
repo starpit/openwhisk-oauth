@@ -51,7 +51,7 @@ function main(params) {
 	// form the request options for the access_token
 	//
 	var options = {
-	    url: provider.token_endpoint,
+	    url: provider.endpoints.token,
 	    method: 'POST',
 	    headers: {
 		'Content-Type': 'application/json'
@@ -70,8 +70,9 @@ function main(params) {
 	//
 	request(options, function(err, response, body) {
 	    if (err) {
-		console.log(JSON.stringify(err));
+		console.error(JSON.stringify(err));
 		reject(err);
+
 	    } else {
 		//
 		// all right, we now have an access_token
@@ -86,7 +87,7 @@ function main(params) {
 		// for account handle
 		//
 		request({
-		    url: provider.userinfo_endpoint,
+		    url: provider.endpoints.userinfo,
 		    method: 'GET',
 		    headers: {
 			'Accept': 'application/json',
@@ -95,8 +96,9 @@ function main(params) {
 		    }
 		}, function(err2, response2, body2) {
 		    if (err2) {
-			console.log('ERR2', err2);
+			console.error(JSON.stringify(err2));
 			reject(err2);
+
 		    } else {
 			//
 			// great, now we have the profile!
@@ -107,8 +109,10 @@ function main(params) {
 
 			resolve({
 			    tid: state && state.tid, // transaction id, so the client knows when we're done
+			    
 			    providerName: providerName,
-			    id: body2[provider.userinfo_identifier]
+			    id: body2[provider.userinfo_identifier],
+			    access_token: body.access_token
 			});
 		    }
 		});
