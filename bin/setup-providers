@@ -1,0 +1,90 @@
+#!/usr/bin/env node
+// -*- mode: javascript -*-
+
+const fs = require('fs'),
+      open = require('open'),
+      path = require('path'),
+      colors = require('colors'),
+      inquirer = require('inquirer'),
+      propertiesParser = require('properties-parser'),
+      config = propertiesParser.read(path.join(__dirname, '..', 'conf', 'config.sh')),
+      providersPath = path.join(__dirname, '..', 'conf', 'providers.json'),
+      providers_template = require(path.join(__dirname, '..', 'conf', 'providers-template'))
+
+console.log()
+console.log('In the following, use this for your ' + 'callback URL'.red)
+console.log('\t\t' + config.APIGW.blue)
+    console.log()
+
+const ask = (providerName, provider) => L => {
+    return inquirer.prompt([{
+	name: 'ok',
+	type: 'confirm',
+	message: 'Set up an oauth application with ' + providerName.red + '?'
+    }]).then(answers => new Promise((resolve, reject) => {
+	if (answers.ok) {
+	    open(provider.new_oauth_app)
+	    inquirer.prompt([
+		{ name: 'client_id', message: 'Enter your client_id', type: 'input' },
+		{ name: 'client_secret', message: 'Enter your client_secret', type: 'input' }
+
+	    ]).then(answers2 => {
+		console.log()
+		provider.credentials.client_id = answers2.client_id
+		provider.credentials.client_secret = answers2.client_secret
+		L.push(provider)
+		resolve(L)
+	    })
+
+	} else {
+	    delete providers_template[providerName]
+	    resolve(L)
+	}
+    }))
+}
+
+/**
+ * Offer to save the providers config
+ *
+ * @param L a list of providers
+ *
+ */
+const saveConfig = L => {
+    if (L.length == 0) {
+	return console.log('Nothing to do, exiting.')
+    }
+	
+    console.log()
+    console.log(providers_template)
+    console.log()
+	
+    inquirer.prompt([{
+	name: 'ok',
+	type: 'confirm',
+	message: 'Please confirm: do you wish to save this configuration?'
+    }])
+	.then(() => fs.rename(providersPath, `${providersPath}.bak`,
+			      () => fs.writeFile(providersPath,
+						 JSON.stringify(providers_template, undefined, 4),
+						 err => err ? console.error(err) : console.log("ok"))))
+}
+
+/**
+ * Turn an object into an array, using the given mapping function f to
+ * be applied to each, as f(key, O[key])
+ *
+ */
+const toArray = (O, f) => Object.keys(O).map(key => f(key, O[key]))
+
+/**
+ * This evalutes the promises, in sequence, of the given array of
+ * promises Ps.
+ *
+ * c.f. Promise.each from bluebird.
+ */
+Promise.each = Ps => Ps.reduce((promise, P) => promise.then(P), Promise.all([]))
+
+Promise.each(toArray(providers_template, ask))
+    .then(saveConfig)
+
+

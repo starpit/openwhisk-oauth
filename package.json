@@ -1,8 +1,19 @@
 {
-  "name": "",
-  "version": "",
+  "name": "openwhisk-oauth",
+  "version": "1.0.0",
+  "license": "Apache-2.0",
+  "main": "lib/client.js",
+  "keywords": [
+    "openwhisk",
+    "serverless",
+    "oauth",
+    "login",
+    "authentication"
+  ],
   "dependencies": {
+    "colors": "^1.1.2",
     "expand-home-dir": "0.0.3",
+    "inquirer": "^2.0.0",
     "open": "0.0.5",
     "openwhisk": "^3.2.1",
     "properties-parser": "^0.3.1",
