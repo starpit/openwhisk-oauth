@@ -1,6 +1,14 @@
 var request = require('request')
 
 /**
+ * Perform a simple authorization check
+ *
+ */
+function onACL(providerName, user, acl) {
+    return !acl || acl.find(A => A.user === user && A.provider === providerName)
+}
+
+/**
  * Validate a given access_token
  *
  */
@@ -25,7 +33,7 @@ function main(params) {
 		console.error(rejectionMessage)
 		reject(rejectionMessage)
 
-	    } else {
+	    } else if (onACL(providerName, body[provider.userinfo_identifier], params.acl)) {
 		delete params.provider
 		delete params.providerName
 		delete params.access_token
