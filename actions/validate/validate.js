@@ -21,7 +21,7 @@ function main(params) {
 	    }
 	}, function(err, response, body) {
 	    if (err || response.statusCode != 200) {
-		const rejectionMessage = err ? JSON.stringify(err) : JSON.stringify(response)
+		const rejectionMessage = err || { statusCode: response.statusCode, body: JSON.parse(body) }
 		console.error(rejectionMessage)
 		reject(rejectionMessage)
 
