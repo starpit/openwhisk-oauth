@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+# name of the sequence
+if [ -z $2 ]; then
+    PACKAGE_PART=`echo $1 | awk '{print substr($0, 1, index($0, "/"))}'`
+    ACTION_PART=`echo $1 | awk '{print substr($0, index($0, "/") + 1)}'`
+
+    SEQUENCE="${PACKAGE_PART}${ACTION_PART}-with-authentication"
+    
+else
+    SEQUENCE=$2
+fi
+
+wsk action delete "$SEQUENCE" 2>&1 | grep -v "resource does not exist";
+wsk action create "$SEQUENCE" --sequence oauth/validate,"$1"
