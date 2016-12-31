@@ -20,11 +20,16 @@ if [ $? == 1 ]; then
     ./bin/setup-providers
 fi
 
+. ./conf/config.sh
+LOGIN_ENDPOINT="${APIGW}"
+
 #
 # Update the package with the providers configuration
 #
 PROVIDERS=`cat conf/providers.json`
-wsk package update "${PACKAGE}" -p providers "${PROVIDERS}"
+wsk package update "${PACKAGE}" \
+    -p providers "${PROVIDERS}" \
+    -p token_endpoint_form "{ \"redirect_uri\": \"${LOGIN_ENDPOINT}\" }"
 
 
 #

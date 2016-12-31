@@ -35,9 +35,10 @@ function main(params) {
 	    client_secret: provider.credentials.client_secret,
 	    code: code
 	};
+	const params_token_endpoint_form = params.token_endpoint_form || {};
 	if (provider.token_endpoint_form) {
 	    for (var x in provider.token_endpoint_form) {
-		form[x] = provider.token_endpoint_form[x];
+		form[x] = params_token_endpoint_form[x] || provider.token_endpoint_form[x];
 	    }
 	}
 
@@ -63,9 +64,10 @@ function main(params) {
 	// ok, here we go, exchanging the oauth code for an access_token
 	//
 	request(options, function(err, response, body) {
-	    if (err) {
-		console.error(JSON.stringify(err));
-		reject(err);
+	    if (err || response.statusCode >= 400) {
+		const errorMessage = err || { statusCode: response.statusCode, body: body }
+		console.error(JSON.stringify(errorMessage));
+		reject(errorMessage);
 
 	    } else {
 		//
@@ -74,7 +76,9 @@ function main(params) {
 		if (typeof body == 'string') {
 		    body = JSON.parse(body);
 		}
-	    
+
+		// console.log("TOKEN RESPONSE", body)
+
 		//
 		// now we request the user's profile, so that we have some
 		// persistent identifying information; e.g. email address
@@ -89,9 +93,10 @@ function main(params) {
 			'User-Agent': 'OpenWhisk'
 		    }
 		}, function(err2, response2, body2) {
-		    if (err2) {
-			console.error(JSON.stringify(err2));
-			reject(err2);
+		    if (err2 || response2.statusCode >= 400) {
+			const errorMessage = err2 || { statusCode: response2.statusCode, body: body2 }
+			console.error(JSON.stringify(errorMessage));
+			reject(errorMessage);
 
 		    } else {
 			//
@@ -100,6 +105,8 @@ function main(params) {
 			if (typeof body2 == 'string') {
 			    body2 = JSON.parse(body2);
 			}
+
+			// console.log("PROFILE RESPONSE", body2)
 
 			resolve({
 			    tid: state && state.tid, // transaction id, so the client knows when we're done
