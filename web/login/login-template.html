@@ -41,6 +41,9 @@
     #providers.something-selected .provider-badge:not(.selected) {
         opacity: 0.4;
     }
+    #providers.something-selected .provider-badge.selected .sign-in-text, #providers.something-selected .provider-badge:not(.selected) .signed-in-text, #providers:not(.something-selected) .signed-in-text {
+        display: none;
+    }
     /*.provider-badge.selected {
         border: 3px solid black;
         border-top: none;
@@ -55,7 +58,7 @@
       color: white;
       padding: 6px;
       margin: 1em;
-      width: 200px;
+      width: 215px;
       border-radius: 4px/8px;
 	/*padding: 1em;
 	font-size: 125%;
@@ -301,7 +304,7 @@ const pollForCompletion = (tid, since) => exitCode => new Promise((resolve, reje
     <div id="provider-template" class="provider">
        <div class="provider-badge">
           <div class="provider-icon"></div>
-          <span class="provider-text">Sign in with <span class="provider-name"></span></span>
+          <span class="provider-text"><span class='sign-in-text'>Sign in with</span><span class='signed-in-text'>Signed in with</span> <span class="provider-name"></span></span>
        </div>
     </div>
 
