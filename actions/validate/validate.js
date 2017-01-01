@@ -19,6 +19,8 @@ function main(params) {
 	const providerName = params.provider || params.providerName
 	const provider = providers[providerName]
 
+	console.log('Using provider ' + JSON.stringify(provider))
+	
 	request({
 	    url: provider.endpoints.userinfo,
 	    method: 'GET',
@@ -28,6 +30,8 @@ function main(params) {
 		'User-Agent': 'OpenWhisk'
 	    }
 	}, function(err, response, body) {
+	    console.log("GOT", err, response.statusCode)
+	    
 	    if (err || response.statusCode != 200) {
 		const rejectionMessage = err || { statusCode: response.statusCode, body: JSON.parse(body) }
 		console.error(rejectionMessage)
