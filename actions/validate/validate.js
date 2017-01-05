@@ -1,11 +1,14 @@
 var request = require('request')
+var util = require('util')
 
 /**
  * Perform a simple authorization check
  *
  */
-function onACL(providerName, user, acl) {
-    return !acl || acl.find(A => A.user === user && A.provider === providerName)
+function isAuthorized(providerName, user, acl) {
+    return !acl
+	|| util.isArray(acl) && acl.find(A => A.user === user && A.provider === providerName)
+	|| acl[`${providerName}:${user}`]
 }
 
 /**
@@ -30,14 +33,26 @@ function main(params) {
 		'User-Agent': 'OpenWhisk'
 	    }
 	}, function(err, response, body) {
-	    console.log("GOT", err, response.statusCode)
+	    // console.log("Response from provider", err, response.statusCode)
 	    
 	    if (err || response.statusCode != 200) {
+		//
+		// user is not validated
+		//
 		const rejectionMessage = err || { statusCode: response.statusCode, body: JSON.parse(body) }
 		console.error(rejectionMessage)
 		reject(rejectionMessage)
 
-	    } else if (onACL(providerName, body[provider.userinfo_identifier], params.acl)) {
+	    } else if (!isAuthorized(providerName, body[provider.userinfo_identifier], params.acl)) {
+		//
+		// user is validated but not authorized
+		//
+		reject( { statusCode: 401, body: "User not authorized to invoke this action" })
+
+	    } else {
+		//
+		// user is validated and authorized!
+		//
 		delete params.provider
 		delete params.providerName
 		delete params.access_token
