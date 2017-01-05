@@ -1,0 +1,55 @@
+#!/usr/bin/env node
+// -*- mode: javascript -*-
+
+const path = require('path'),
+      propertiesParser = require('properties-parser'),
+      config = propertiesParser.read(path.join(__dirname, '..', 'conf', 'config.sh'))
+
+const expandHomeDir = require('expand-home-dir'),
+      wskprops = process.env.WSK_AUTH || propertiesParser.read(process.env.WSK_CONFIG_FILE || expandHomeDir('~/.wskprops')),
+      owProps = {
+	  apihost: process.env.WSK_APIHOST || wskprops.APIHOST || 'openwhisk.ng.bluemix.net',
+	  api_key: process.env.WSK_AUTH || wskprops.AUTH,
+	  namespace: process.env.WSK_NAMESPACE || wskprops.NAMESPACE || '_',
+	  ignore_certs: process.env.NODE_TLS_REJECT_UNAUTHORIZED === '0'
+      },
+      ow = require('openwhisk')(owProps)
+
+OPERATION=process.argv[2]
+PROVIDER=process.argv[3]
+USER=process.argv[4]
+
+const usage = () => console.log('updateACL <add|remove> [PROVIDER] [USER]')
+const getACL = package => (package.parameters.find(param => param.key === 'acl') || {value: {}}).value
+
+if (!OPERATION || !PROVIDER || !USER) {
+    usage()
+    process.exit(1)
+
+} else {
+    const addToACL = acl => ow.packages.update( { packageName: config.PACKAGE,
+						  package: {
+						      parameters: [{ key: "acl",
+								     value: (acl[`${PROVIDER}:${USER}`] = true) && acl
+								   }]
+						  }
+						}).then(getACL)
+    const removeFromACL = acl => ow.packages.update( { packageName: config.PACKAGE,
+						       package: {
+							   parameters: [{ key: "acl",
+									  value: (delete acl[`${PROVIDER}:${USER}`]) && acl
+									}]
+						       }
+						     }).then(getACL)
+    
+    const doUpdate =
+	  OPERATION === "add" || OPERATION == "a" ? addToACL
+	  : OPERATION === "delete" || OPERATION === "d" || OPERATION === "remove" || OPERATION === "r" ? removeFromACL
+	  : acl => acl // list it, unmodified
+    
+    ow.packages.get( { packageName: config.PACKAGE })
+	.then(getACL)
+	.then(doUpdate)
+	.then(acl => { console.log('ok'); console.log(acl) })
+	.catch(err => console.error(err))
+}
