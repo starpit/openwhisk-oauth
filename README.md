@@ -36,3 +36,43 @@ First, create the backend assets, by executing the script
 }
 ok
 ```
+
+## Web Front Ends
+
+The web directory contains a sample login page.
+
+## Validation Flows
+
+If you wish to create oauth flows that validate credentials, you can
+make use of the `validate` action in the actions directory. For
+example, if you have an action `A` that you wish to protect with a
+validate authentication, you may create a sequence:
+
+```
+wsk action create --sequence A_with_auth oauth/validate,A
+```
+
+The `validate` action takes as input this structure, which is included
+the return value of the login action:
+
+```
+{
+	provider: "github",
+	access_token: "xxx"
+}
+```
+
+Ideally, you would then expose `A_with_auth` via the API gateway, so
+that no secrets are exposed:
+
+```
+wsk api-experimental create /myapp /A get A_with_auth
+```
+
+
+## TODOs
+
+We will need to add support for ACLs. The plan here is to update the
+`validate` action so that it has a binding parameter, which is perhaps
+an array of identities, e.g. `[{ provider: "github", user: "starpit"
+}]`.
