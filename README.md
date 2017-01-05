@@ -18,8 +18,8 @@ If you prefer to set up the provider credentials by hand, then
 
 This package current supports these providers:
 
-   - github: https://github.com/settings/developers
-   - google: https://console.developers.google.com/apis/credentials
+   - [github](https://github.com/settings/developers)
+   - [google](https://console.developers.google.com/apis/credentials)
 
 ## Demo usage
 
@@ -39,7 +39,11 @@ ok
 
 ## Web Front Ends
 
-The web directory contains a sample login page.
+The web directory contains a sample login page. These provided
+`init.sh` script pages currently deploy to Bluemix ObjectStore, making
+use of
+the
+[openwhisk-objectstore](https://github.com/starpit/openwhisk-objectstore) package.
 
 ## Validation Flows
 
@@ -73,9 +77,20 @@ wsk api-experimental create /myapp /A get A_with_auth
 ```
 
 
-## TODOs
+## Authorization
 
-We will need to add support for ACLs. The plan here is to update the
-`validate` action so that it has a binding parameter, which is perhaps
-an array of identities, e.g. `[{ provider: "github", user: "starpit"
-}]`.
+The `validate` action obeys a binding parameter whose key as "acl",
+and whose value is a map of authorized identities
+e.g. `{"github:starpit": true}`.
+
+The helper utility `bin/updateACL` can be used to adjust the ACL:
+
+```
+% ./bin/updateACL add github starpit
+ok
+{ 'github:starpit': true }
+
+% ./bin/updateACL remove github starpit
+ok
+{ }
+```
