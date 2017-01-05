@@ -7,7 +7,9 @@ const fs = require('fs'),
       colors = require('colors'),
       inquirer = require('inquirer'),
       providersPath = path.join(__dirname, '..', 'conf', 'providers.json'),
+      providersClientPath = path.join(__dirname, '..', 'conf', 'providers-client.json'),
       providers_template = require(path.join(__dirname, '..', 'conf', 'providers-template'))
+      providers_client_template = require(path.join(__dirname, '..', 'conf', 'providers-client-template'))
 
 console.log()
 console.log('In the following, use this for your ' + 'callback URL'.red)
@@ -30,16 +32,27 @@ const ask = (providerName, provider) => L => {
 		console.log()
 		provider.credentials.client_id = answers2.client_id
 		provider.credentials.client_secret = answers2.client_secret
+
+		providers_client_template[providerName].credentials.client_id = answers2.client_id
+
 		L.push(provider)
 		resolve(L)
 	    })
 
 	} else {
 	    delete providers_template[providerName]
+	    delete providers_client_template[providerName]
 	    resolve(L)
 	}
     }))
 }
+
+const saveProviders = (providersPath, providers) => new Promise((resolve, reject) => {
+    fs.rename(providersPath, `${providersPath}.bak`,
+                              () => fs.writeFile(providersPath,
+                                                 JSON.stringify(providers, undefined, 4),
+                                                 err => err ? reject(err) : resolve()))
+})
 
 /**
  * Offer to save the providers config
@@ -61,10 +74,10 @@ const saveConfig = L => {
 	type: 'confirm',
 	message: 'Please confirm: do you wish to save this configuration?'
     }])
-	.then(() => fs.rename(providersPath, `${providersPath}.bak`,
-			      () => fs.writeFile(providersPath,
-						 JSON.stringify(providers_template, undefined, 4),
-						 err => err ? console.error(err) : console.log("ok"))))
+        .then(Promise.all[saveProviders(providersPath, providers_template),
+			  saveProviders(providersClientPath, providers_client_template)])
+        .then(() => console.log('ok'))
+	.catch(err => { console.error(err); process.exit(1) })
 }
 
 /**
