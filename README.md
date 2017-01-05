@@ -52,6 +52,9 @@ validate authentication, you may create a sequence:
 wsk action create --sequence A_with_auth oauth/validate,A
 ```
 
+The utility `bin/with-authn` does this, such that `bin/with-authn A`
+will create a sequence named `A-with-authentication`. 
+
 The `validate` action takes as input this structure, which is included
 the return value of the login action:
 
@@ -62,8 +65,8 @@ the return value of the login action:
 }
 ```
 
-Ideally, you would then expose `A_with_auth` via the API gateway, so
-that no secrets are exposed:
+You can now expose `A_with_auth` via the API gateway, so that no
+secrets are exposed:
 
 ```
 wsk api-experimental create /myapp /A get A_with_auth
