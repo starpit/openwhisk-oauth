@@ -8,20 +8,20 @@ npm install >& /dev/null
 # set up the package and the login action
 #
 wsk package create "${PACKAGE}" 2>&1 | grep -v "resource already exists"
-action=login
-wsk action delete "${PACKAGE}/${action}" 2>&1 | grep -v "resource does not exist";
-wsk action create --kind nodejs:6 "${PACKAGE}/${action}" actions/${action}/${action}.js
+wsk action delete "${PACKAGE}/${ACTION}" 2>&1 | grep -v "resource does not exist";
+wsk action create --kind nodejs:6 "${PACKAGE}/${ACTION}" actions/${ACTION}/${ACTION}.js
 
 # have we already done the initial setup?
-wsk api-experimental list "/${PACKAGE}" | grep "${action}" > /dev/null
+wsk api-experimental list "/${PACKAGE}" | grep "${ACTION}"
 if [ $? == 1 ]; then
     echo "Performing one-time initialization"
     ./init-apigw.sh
-    ./bin/setup-providers
-fi
 
-. ./conf/config.sh
-LOGIN_ENDPOINT="${APIGW}"
+    LOGIN_ENDPOINT=`wsk api-experimental list "/${PACKAGE}" | grep "${ACTION}" | awk '{print $NF}'`
+    ./bin/setup-providers $LOGIN_ENDPOINT
+else
+    LOGIN_ENDPOINT=`wsk api-experimental list "/${PACKAGE}" | grep "${ACTION}" | awk '{print $NF}'`
+fi
 
 #
 # Update the package with the providers configuration

@@ -1,10 +1,16 @@
-#!/usr/bin/env node
-// -*- mode: javascript -*-
+#!/usr/bin/env bash
+# -*- mode: shell -*-
 
-//
-// the is for demo purposes: open a browser to initiate an oauth token
-// acquisition
-//
-var providerName = process.argv[2] || "github";
-require('../lib/client').loginViaBrowser(providerName);
+#
+# the is for demo purposes: open a browser to initiate an oauth token
+# acquisition
+#
+
+. conf/config.sh
+
+providerName=${1-github}
+
+LOGIN_ENDPOINT=`wsk api-experimental list "/${PACKAGE}" | grep "${ACTION}" | awk '{print $NF}'`
+
+node -e "require('./lib/client').loginViaBrowser(\"${providerName}\", \"${LOGIN_ENDPOINT}\")"
 

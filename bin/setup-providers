@@ -6,15 +6,13 @@ const fs = require('fs'),
       path = require('path'),
       colors = require('colors'),
       inquirer = require('inquirer'),
-      propertiesParser = require('properties-parser'),
-      config = propertiesParser.read(path.join(__dirname, '..', 'conf', 'config.sh')),
       providersPath = path.join(__dirname, '..', 'conf', 'providers.json'),
       providers_template = require(path.join(__dirname, '..', 'conf', 'providers-template'))
 
 console.log()
 console.log('In the following, use this for your ' + 'callback URL'.red)
-console.log('\t\t' + config.APIGW.blue)
-    console.log()
+console.log('\t\t' + process.argv[2].blue)
+console.log()
 
 const ask = (providerName, provider) => L => {
     return inquirer.prompt([{
