@@ -11,5 +11,7 @@ else
     SEQUENCE=$2
 fi
 
-wsk action delete "$SEQUENCE" 2>&1 | grep -v "resource does not exist";
-wsk action create "$SEQUENCE" --sequence oauth/validate,"$1"
+(wsk action delete "$SEQUENCE" 2>&1 | grep -v "resource does not exist") >& /dev/null
+wsk action create "$SEQUENCE" --sequence oauth/validate,"$1" >& /dev/null
+
+echo "$SEQUENCE"
