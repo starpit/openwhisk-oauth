@@ -20,27 +20,34 @@ PROVIDER=process.argv[3]
 USER=process.argv[4]
 
 const usage = () => console.log('updateACL <add|remove> [PROVIDER] [USER]')
-const getACL = package => (package.parameters.find(param => param.key === 'acl') || {value: {}}).value
+const getACL = package => {
+    let aclParam = package.parameters.find(param => param.key === 'acl')
+    if (!aclParam) {
+	aclParam = { key: "acl", value: {} }
+	package.parameters.push(aclParam)
+    }
+    return aclParam.value
+}
 
 if (!OPERATION || !PROVIDER || !USER) {
     usage()
     process.exit(1)
 
 } else {
-    const addToACL = acl => ow.packages.update( { packageName: config.PACKAGE,
-						  package: {
-						      parameters: [{ key: "acl",
-								     value: (acl[`${PROVIDER}:${USER}`] = true) && acl
-								   }]
-						  }
-						}).then(getACL)
-    const removeFromACL = acl => ow.packages.update( { packageName: config.PACKAGE,
-						       package: {
-							   parameters: [{ key: "acl",
-									  value: (delete acl[`${PROVIDER}:${USER}`]) && acl
-									}]
-						       }
-						     }).then(getACL)
+    const addToACL = package => {
+	getACL(package)[`${PROVIDER}:${USER}`] = true
+	return ow.packages.update( { packageName: package.name,
+				     package: package
+				   })
+	    .then(getACL)
+    }
+    const removeFromACL = package => {
+	delete getACL(package)[`${PROVIDER}:${USER}`]
+	return ow.packages.update( { packageName: package.name,
+				     package: package
+				   })
+	    .then(getACL)
+    }
     
     const doUpdate =
 	  OPERATION === "add" || OPERATION == "a" ? addToACL
@@ -48,7 +55,6 @@ if (!OPERATION || !PROVIDER || !USER) {
 	  : acl => acl // list it, unmodified
     
     ow.packages.get( { packageName: config.PACKAGE })
-	.then(getACL)
 	.then(doUpdate)
 	.then(acl => { console.log('ok'); console.log(acl) })
 	.catch(err => console.error(err))
