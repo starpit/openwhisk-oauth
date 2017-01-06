@@ -37,14 +37,6 @@ First, create the backend assets, by executing the script
 ok
 ```
 
-## Web Front Ends
-
-The web directory contains a sample login page. These provided
-`init.sh` script pages currently deploy to Bluemix ObjectStore, making
-use of
-the
-[openwhisk-objectstore](https://github.com/starpit/openwhisk-objectstore) package.
-
 ## Validation Flows
 
 If you wish to create oauth flows that validate credentials, you can
@@ -94,3 +86,27 @@ ok
 ok
 { }
 ```
+
+
+## Web Front-End Demos
+
+The web directory contains sample front-ends.  The provided `init.sh`
+scripts in the subdirectories currently deploy to Bluemix ObjectStore,
+making use of
+the
+[openwhisk-objectstore](https://github.com/starpit/openwhisk-objectstore) package.
+
+### Login Demo
+
+This page offers the user a list of the provisioned identity
+providers. If opened with a `redirect_uri` query parameter,
+e.g. `https://.../login.html?redirect_uri=xxx`, then, upon
+authentication with the provider, the login page will pass on this
+redirect request to the provider. When done, the provider will
+redirect the browser, passing through the tokens necessary for
+invoking actions protected with `validate`.
+
+### Protected Action Demo
+
+This page demonstrates how one might use the login page to invoke a
+protected action.
