@@ -22,7 +22,11 @@ function main(params) {
 	const providerName = params.provider || params.providerName
 	const provider = providers[providerName]
 
-	console.log('Using provider ' + JSON.stringify(provider))
+	if (!provider) {
+	    return reject(`Provider not found for providerName ${providerName}`)
+	}
+	
+	console.log(`Using provider ${providerName}`)
 	
 	request({
 	    url: provider.endpoints.userinfo,
@@ -33,21 +37,22 @@ function main(params) {
 		'User-Agent': 'OpenWhisk'
 	    }
 	}, function(err, response, body) {
-	    // console.log("Response from provider", err, response.statusCode)
-	    
+	    console.log("Response from provider", err, response.statusCode)
+
 	    if (err || response.statusCode != 200) {
 		//
 		// user is not validated
 		//
 		const rejectionMessage = err || { statusCode: response.statusCode, body: JSON.parse(body) }
-		console.error(rejectionMessage)
+		console.error("Validation error", rejectionMessage)
 		reject(rejectionMessage)
 
 	    } else if (!isAuthorized(providerName, body[provider.userinfo_identifier], params.acl)) {
 		//
 		// user is validated but not authorized
 		//
-		reject( { statusCode: 401, body: "User not authorized to invoke this action" })
+		console.error("Not authorized")
+		reject({ statusCode: 401, body: "User not authorized to invoke this action" })
 
 	    } else {
 		//
