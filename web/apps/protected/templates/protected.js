@@ -41,7 +41,7 @@ const doInvokeProtectedAction = inputValue => new Promise((resolve,reject) => {
     xhr.send(JSON.stringify({ value: inputValue }))
 })
 
-const doLogin = () => window.location.href = `{LOGIN_ENDPOINT}?redirect_uri=${encodeURIComponent(window.location.href)}`
+const doLogin = () => window.location.href = `{LOGIN_URL}?redirect_uri=${encodeURIComponent(window.location.href)}`
 
 const init = () => !qs.authorization && !qs.authToken && doLogin()
 

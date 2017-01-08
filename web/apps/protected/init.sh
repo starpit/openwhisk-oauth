@@ -20,13 +20,16 @@ echo -n "."
 PROTECTED_ACTION_ENDPOINT=`wsk api-experimental list /demo | grep ${BASE_ACTION} | awk '{print $NF}'`
 echo -n "."
 
-# TODO find a way not to hard-code this
-LOGIN_ENDPOINT="https://dal.objectstorage.open.softlayer.com/v1/AUTH_8505e32a0c1a48c2b7a37c063adad2ba/public/login.html"
+# find the LOGIN_URL
+export OS_HOME=${OS_HOME-~/git/whisk/openwhisk-objectstore}
+export OS_AUTH=${OS_AUTH-`${OS_HOME}/util/getAuthToken.sh`}
+PUBLIC_CONTAINER_ID=`wsk action invoke objectstore/getContainerID -p container public -p authToken "${OS_AUTH}" -b -r | jq --raw-output .id`
+LOGIN_URL="https://dal.objectstorage.open.softlayer.com/v1/AUTH_${PUBLIC_CONTAINER_ID}/public/login.html"
 
 # cheapskate templating
 sed -e "s#{ACTION_ENDPOINT_METHOD}#${PROTECTED_ACTION_ENDPOINT_METHOD}#g" \
     -e "s#{ACTION_ENDPOINT}#${PROTECTED_ACTION_ENDPOINT}#g" \
-    -e "s#{LOGIN_ENDPOINT}#${LOGIN_ENDPOINT}#g" \
+    -e "s#{LOGIN_URL}#${LOGIN_URL}#g" \
     templates/${PAGE}.js > build/${PAGE}.js
 echo "."
 
