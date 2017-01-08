@@ -27,13 +27,13 @@ LOGIN_ENDPOINT="https://dal.objectstorage.open.softlayer.com/v1/AUTH_8505e32a0c1
 sed -e "s#{ACTION_ENDPOINT_METHOD}#${PROTECTED_ACTION_ENDPOINT_METHOD}#g" \
     -e "s#{ACTION_ENDPOINT}#${PROTECTED_ACTION_ENDPOINT}#g" \
     -e "s#{LOGIN_ENDPOINT}#${LOGIN_ENDPOINT}#g" \
-    ${PAGE}-template.js > ${PAGE}.js
+    templates/${PAGE}.js > build/${PAGE}.js
 echo "."
 
 sed -e '/{CSS}/ {' -e 'r ../common/common.css' -e 'd' -e '}' \
-    -e '/{JS}/ {' -e "r ./${PAGE}.js" -e 'd' -e '}' \
-    ${PAGE}-template.html > ${PAGE}.html
+    -e '/{JS}/ {' -e "r build/${PAGE}.js" -e 'd' -e '}' \
+    templates/${PAGE}.html > build/${PAGE}.html
     
-../common/deploy.sh ${PAGE}.html
+../common/deploy.sh build/${PAGE}.html
 
 echo "ok"

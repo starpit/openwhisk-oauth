@@ -30,15 +30,15 @@ echo -n "."
 sed -e "s#{CHECK_FOR_COMPLETION_ENDPOINT}#${CHECK_FOR_COMPLETION_ENDPOINT}#g" \
     -e "s#{PROVIDERS}#${PROVIDERS}#g" \
     -e "s#{LOGIN_ENDPOINT}#${LOGIN_ENDPOINT}#g" \
-    ${PAGE}-template.js > ${PAGE}.js
+    templates/${PAGE}.js > build/${PAGE}.js
 echo -n "."
 
 sed -e '/{CSS}/ {' -e 'r ../common/common.css' -e 'd' -e '}' \
-    -e '/{JS/ {' -e "r ./${PAGE}.js" -e 'd' -e '}' \
-    ${PAGE}-template.html > ${PAGE}.html
+    -e '/{JS/ {' -e "r build/${PAGE}.js" -e 'd' -e '}' \
+    templates/${PAGE}.html > build/${PAGE}.html
 echo "."
 
 # deploy the assets to objectstore
-../common/deploy.sh ${PAGE}.html
+../common/deploy.sh build/${PAGE}.html
 
 echo "ok"
