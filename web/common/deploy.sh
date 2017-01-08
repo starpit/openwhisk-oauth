@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-OS_HOME=~/git/whisk/openwhisk-objectstore
+OS_HOME=${OS_HOME-~/git/whisk/openwhisk-objectstore}
 
 CONTAINER=public
 
