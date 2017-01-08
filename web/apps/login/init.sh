@@ -6,14 +6,14 @@
 #wsk api-experimental delete /objectstore /createObjectAsReq
 #UPLOAD_ENDPOINT=`wsk api-experimental create /objectstore /createObjectAsReq post objectstore-${CONTAINER}/createObjectAsReq | grep https`
 
-. ../../conf/config.sh
+. ../../../conf/config.sh
 . ~/.wskprops
 
 # take the page name from the name of the current directory
 PAGE=${PWD##*/}
 
 # holy cow, we need to replace "&" with "\\&", so that awk doesn't treat & as "replace with matching text"
-PROVIDERS="`cat ../../conf/providers-client.json | tr -d '\n' | sed 's/&/\\\\\\\&/g'`"
+PROVIDERS="`cat ../../../conf/providers-client.json | tr -d '\n' | sed 's/&/\\\\\\\&/g'`"
 echo -n "."
 
 LOGIN_ENDPOINT=`wsk api-experimental list "/${PACKAGE}" | grep "${ACTION}" | awk '{print $NF}'`
@@ -33,12 +33,12 @@ sed -e "s#{CHECK_FOR_COMPLETION_ENDPOINT}#${CHECK_FOR_COMPLETION_ENDPOINT}#g" \
     templates/${PAGE}.js > build/${PAGE}.js
 echo -n "."
 
-sed -e '/{CSS}/ {' -e 'r ../common/common.css' -e 'd' -e '}' \
+sed -e '/{CSS}/ {' -e 'r ../../common/common.css' -e 'd' -e '}' \
     -e '/{JS/ {' -e "r build/${PAGE}.js" -e 'd' -e '}' \
     templates/${PAGE}.html > build/${PAGE}.html
 echo "."
 
 # deploy the assets to objectstore
-../common/deploy.sh build/${PAGE}.html
+../../common/deploy.sh build/${PAGE}.html
 
 echo "ok"

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-. ../../conf/config.sh
+. ../../../conf/config.sh
 . ~/.wskprops
 
 # take the page name from the name of the current directory
@@ -10,7 +10,7 @@ BASE_ACTION="protectedAction"
 wsk action update ${BASE_ACTION} protectedAction.js
 echo -n "."
 
-PROTECTED_ACTION=`../../bin/with-authn ${BASE_ACTION}`
+PROTECTED_ACTION=`../../../bin/with-authn ${BASE_ACTION}`
 echo -n "."
 
 PROTECTED_ACTION_ENDPOINT_METHOD="post"
@@ -30,10 +30,10 @@ sed -e "s#{ACTION_ENDPOINT_METHOD}#${PROTECTED_ACTION_ENDPOINT_METHOD}#g" \
     templates/${PAGE}.js > build/${PAGE}.js
 echo "."
 
-sed -e '/{CSS}/ {' -e 'r ../common/common.css' -e 'd' -e '}' \
+sed -e '/{CSS}/ {' -e 'r ../../common/common.css' -e 'd' -e '}' \
     -e '/{JS}/ {' -e "r build/${PAGE}.js" -e 'd' -e '}' \
     templates/${PAGE}.html > build/${PAGE}.html
     
-../common/deploy.sh build/${PAGE}.html
+../../common/deploy.sh build/${PAGE}.html
 
 echo "ok"
