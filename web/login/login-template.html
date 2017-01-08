@@ -170,78 +170,6 @@
       const qs = options =>
             Object.keys(options).reduce((q, key) => q + (q.length == 0 ? "?" : "&") + `${key}=${encodeURIComponent(options[key])}`, "")
 
-      /** simple openwhisk library */
-      const ow = {
-	  activations: {
-	      list: options => new Promise((resolve, reject) => {
-		  const xhr = new XMLHttpRequest()
-		  xhr.onreadystatechange = () => {
-		      if (xhr.readyState == XMLHttpRequest.DONE) {
-			  try {
-			      resolve(JSON.parse(xhr.responseText))
-			  } catch (e) {
-			      console.error(e)
-			      reject(e)
-			  }
-		      }
-		  }
-		  xhr.open("GET", `{OW_ENDPOINT}/namespaces/_/activations${qs(options)}`, true)
-		  //xhr.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
-		  xhr.setRequestHeader("Authorization", `Basic ${btoa("{OW_AUTH}")}`);
-		  xhr.send()
-	      })
-	  }
-      }
-
-const pollForCompletion = (tid, since) => exitCode => new Promise((resolve, reject) => {
-    if (exitCode === 0) {
-	document.getElementById("success").innerText = "Logging on..."
-	
-	const waitForThisAction = 'login'
-
-	const pollOnce = (iter, sleepInterval) => {
-	    if (iter > 25) {
-		document.getElementById("success").innerText = "Timeout"
-		return
-	    }
-	    if (iter > 2) {
-		//
-		// if we've been waiting for a while, let the user
-		// know we're still alive
-		//
-		document.getElementById("success").innerText += "."
-	    }
-
-	    if (iter == 5) sleepInterval = 200 // 200ms
-	    else if (iter == 10) sleepInterval = 1000
-	    else if (iter == 50) sleepInterval = 3000
-
-	    ow.activations.list({ limit: 5, name: waitForThisAction, since: since, docs: true }).then(list => {
-		for (var i = 0; i < list.length; i++) {
-		    var activationDetails = list[i]
-
-		    try {
-			if (activationDetails.response.result.tid === tid
-			    /*&& activationDetails.namespace.indexOf('oauth') >= 0*/) {
-
-			    delete activationDetails.response.result.tid
-			    // console.log(activationDetails.response.result)
-			    
-			    // all done
-			    return resolve(activationDetails.response.result)
-			}
-		    } catch (e) {
-			return reject(e)
-		    }
-		}
-
-		setTimeout(() => pollOnce(iter + 1), sleepInterval)
-	    })
-	}
-	pollOnce(0, 100)
-    }
-})
-
 	const openAndPollForCompletion = ep => click_evt => {
 	    const currentSelection = document.querySelector("#providers .selected")
 	    if (currentSelection === click_evt.currentTarget) return
@@ -282,16 +210,22 @@ const pollForCompletion = (tid, since) => exitCode => new Promise((resolve, reje
 	      }
 	  }
 
-	  ow.activations.list({ limit: 1, docs: true })
-	      .then(lastOne => {
-		  try {
-		      pollForCompletion(ep.tid, lastOne[0].end)(0)
-			  .then(authorization => wrapItUp("\u2714", "success", "Successfully logged on!", authorization))
-			  .catch(err => wrapItUp("\u2715", "failure", "Failed to logged on"))
-		  } catch (e) {
-		      console.error(e)
-		  }
-	      })
+	    const waitForCompletion = () => {
+		const xhr = new XMLHttpRequest();
+		xhr.onload = () => {
+		    if (xhr.status === 200) {
+			const authorization = JSON.parse(xhr.responseText)
+			wrapItUp("\u2714", "success", "Successfully logged on!", authorization)
+		    } else {
+			console.error(xhr.responseText)
+		    	wrapItUp("\u2715", "failure", "Failed to logged on")
+		    }
+		}
+		xhr.open("POST", "{CHECK_FOR_COMPLETION_ENDPOINT}")
+		xhr.send(JSON.stringify(ep))
+	    }
+	    waitForCompletion()
+	    // poll for completion
       }
 
       function init() {

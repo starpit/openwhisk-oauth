@@ -15,7 +15,7 @@ wsk action create --kind nodejs:6 "${PACKAGE}/${ACTION}" actions/${ACTION}/${ACT
 wsk api-experimental list "/${PACKAGE}" | grep "${ACTION}"
 if [ $? == 1 ]; then
     echo "Performing one-time initialization"
-    ./init-apigw.sh
+    wsk api-experimental create "/${PACKAGE}" "/${ACTION}" get "${PACKAGE}/${ACTION}" 2>&1 | grep -v "already exists"
 
     LOGIN_ENDPOINT=`wsk api-experimental list "/${PACKAGE}" | grep "${ACTION}" | awk '{print $NF}'`
     ./bin/setup-providers $LOGIN_ENDPOINT

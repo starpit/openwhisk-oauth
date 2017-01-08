@@ -11,9 +11,11 @@
 
 # holy cow, we need to replace "&" with "\\&", so that awk doesn't treat & as "replace with matching text"
 PROVIDERS="`cat ../../conf/providers-client.json | tr -d '\n' | sed 's/&/\\\\\\\&/g'`"
-LOGIN_ENDPOINT=`wsk api-experimental list "/${PACKAGE}" | grep ${ACTION}" | awk '{print $NF}'`
-OW_ENDPOINT="https://${APIHOST}/api/v1"
+LOGIN_ENDPOINT=`wsk api-experimental list "/${PACKAGE}" | grep "${ACTION}" | awk '{print $NF}'`
 
-awk -v OW_ENDPOINT="${OW_ENDPOINT}" -v OW_AUTH="${AUTH}" -v PROVIDERS="${PROVIDERS}" -v LOGIN_ENDPOINT="${LOGIN_ENDPOINT}" '{gsub("{PROVIDERS}", PROVIDERS); gsub("{OW_ENDPOINT}", OW_ENDPOINT); gsub("{OW_AUTH}", OW_AUTH); gsub("{LOGIN_ENDPOINT}", LOGIN_ENDPOINT); print $0}' login-template.html > login.html
+wsk api-experimental create "/${PACKAGE}" /checkForCompletion post "${PACKAGE}/checkForCompletion" 2>&1 | grep -v "already exists"
+CHECK_FOR_COMPLETION_ENDPOINT=`wsk api-experimental list "/${PACKAGE}" | grep checkForCompletion | awk '{print $NF}'`
+
+awk -v CHECK_FOR_COMPLETION_ENDPOINT="${CHECK_FOR_COMPLETION_ENDPOINT}" -v PROVIDERS="${PROVIDERS}" -v LOGIN_ENDPOINT="${LOGIN_ENDPOINT}" '{gsub("{PROVIDERS}", PROVIDERS); gsub("{CHECK_FOR_COMPLETION_ENDPOINT}", CHECK_FOR_COMPLETION_ENDPOINT); gsub("{LOGIN_ENDPOINT}", LOGIN_ENDPOINT); print $0}' login-template.html > login.html
 ../common.sh login.html
 
