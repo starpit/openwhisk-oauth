@@ -1,0 +1,120 @@
+body {
+    font-family: "Roboto", sans-serif;
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+}
+
+.header {
+    display: flex;
+    flex-direction: column;
+    color: white;
+    background-color: #1f78b4;
+    font: 16px/24px Roboto, sans-serif;
+    box-shadow: 0 0 4px rgba(0,0,0,.14), 0 4px 8px rgba(0,0,0,.28);
+}
+.header-title {
+    display: flex;
+    align-items: center;
+    margin: 6px 0;
+    padding: 0 24px;
+    font-size: 20px;
+}
+.header-title-icon {
+    margin: 6px 16px 6px 0;
+    font-size: 150%;
+}
+.header-sub {
+    padding: 8px 24px;
+    font-size: 16px;
+}
+
+#providers {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 2em 0;
+}
+#providers.something-selected .provider-badge:not(.selected) {
+    opacity: 0.4;
+}
+#providers.something-selected .provider-badge.selected .sign-in-text, #providers.something-selected .provider-badge:not(.selected) .signed-in-text, #providers:not(.something-selected) .signed-in-text {
+																			display: none;
+																		    }
+/*.provider-badge.selected {
+        border: 3px solid black;
+        border-top: none;
+        border-bottom: none;
+    }*/
+#provider-template {
+    display: none;
+}
+.provider-badge {
+    display: flex;
+    align-items: center;
+    color: white;
+    padding: 6px;
+    margin: 1em;
+    width: 215px;
+    border-radius: 4px/8px;
+    /*padding: 1em;
+	font-size: 125%;
+	background-color: #e3e3e3;*/
+    transition: all 150ms ease-in-out;
+}
+.provider-text {
+    font-size: 0.875rem;
+    margin: 0 24px;
+    flex: 1;
+    text-align: right;
+}
+.provider-name {
+    text-transform: capitalize;
+}
+.provider.github .provider-badge:hover {
+    -webkit-filter: sepia(1) hue-rotate(120deg);
+    filter: sepia(1) hue-rotate(120deg);
+}
+.provider-badge:hover, button:enabled:hover {
+			   -webkit-filter: saturate(1.5);
+			   filter: saturate(1.5);
+			   cursor: pointer;
+		       }
+.status {
+    display: flex;
+    align-items: center;
+    margin: 1em;
+    justify-content: center;
+    font-size: 125%;
+}
+#success-mark {
+    display:none;
+    font-size: 250%;
+    margin-right: 0.75rem;
+}
+#success-mark.success {
+    color: green;
+}
+#success-mark.failure {
+    color: red;
+}
+
+.provider .provider-icon {
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    width: 2em;
+    height: 2em;
+}
+.provider.github .provider-badge {
+    background-color: #666;
+}
+.provider.google .provider-badge {
+    background-color: #df4a32;
+}
+.provider.google .provider-icon {
+    background-image: url(https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Google_plus.svg/2000px-Google_plus.svg.png);
+    /*https://developers.google.com/accounts/images/sign-in-with-google.png);*/
+}
+.provider.github .provider-icon {
+    background-image: url(https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg);
+}

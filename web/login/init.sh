@@ -9,13 +9,36 @@
 . ../../conf/config.sh
 . ~/.wskprops
 
+# take the page name from the name of the current directory
+PAGE=${PWD##*/}
+
 # holy cow, we need to replace "&" with "\\&", so that awk doesn't treat & as "replace with matching text"
 PROVIDERS="`cat ../../conf/providers-client.json | tr -d '\n' | sed 's/&/\\\\\\\&/g'`"
+echo -n "."
+
 LOGIN_ENDPOINT=`wsk api-experimental list "/${PACKAGE}" | grep "${ACTION}" | awk '{print $NF}'`
+echo -n "."
 
 wsk api-experimental create "/${PACKAGE}" /checkForCompletion post "${PACKAGE}/checkForCompletion" 2>&1 | grep -v "already exists"
+echo -n "."
+
 CHECK_FOR_COMPLETION_ENDPOINT=`wsk api-experimental list "/${PACKAGE}" | grep checkForCompletion | awk '{print $NF}'`
+echo -n "."
 
-awk -v CHECK_FOR_COMPLETION_ENDPOINT="${CHECK_FOR_COMPLETION_ENDPOINT}" -v PROVIDERS="${PROVIDERS}" -v LOGIN_ENDPOINT="${LOGIN_ENDPOINT}" '{gsub("{PROVIDERS}", PROVIDERS); gsub("{CHECK_FOR_COMPLETION_ENDPOINT}", CHECK_FOR_COMPLETION_ENDPOINT); gsub("{LOGIN_ENDPOINT}", LOGIN_ENDPOINT); print $0}' login-template.html > login.html
-../common.sh login.html
 
+# cheapskate templating
+sed -e "s#{CHECK_FOR_COMPLETION_ENDPOINT}#${CHECK_FOR_COMPLETION_ENDPOINT}#g" \
+    -e "s#{PROVIDERS}#${PROVIDERS}#g" \
+    -e "s#{LOGIN_ENDPOINT}#${LOGIN_ENDPOINT}#g" \
+    ${PAGE}-template.js > ${PAGE}.js
+echo -n "."
+
+sed -e '/{CSS}/ {' -e 'r ../common/common.css' -e 'd' -e '}' \
+    -e '/{JS/ {' -e "r ./${PAGE}.js" -e 'd' -e '}' \
+    ${PAGE}-template.html > ${PAGE}.html
+echo "."
+
+# deploy the assets to objectstore
+../common/deploy.sh ${PAGE}.html
+
+echo "ok"

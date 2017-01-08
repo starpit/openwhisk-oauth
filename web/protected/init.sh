@@ -23,17 +23,17 @@ echo -n "."
 # TODO find a way not to hard-code this
 LOGIN_ENDPOINT="https://dal.objectstorage.open.softlayer.com/v1/AUTH_8505e32a0c1a48c2b7a37c063adad2ba/public/login.html"
 
-awk -v ACTION_ENDPOINT="${PROTECTED_ACTION_ENDPOINT}" \
-    -v ACTION_ENDPOINT_METHOD="${PROTECTED_ACTION_ENDPOINT_METHOD}" \
-    -v LOGIN_ENDPOINT="${LOGIN_ENDPOINT}" \
-    '{
-gsub("{ACTION_ENDPOINT}", ACTION_ENDPOINT);
- gsub("{ACTION_ENDPOINT_METHOD}", ACTION_ENDPOINT_METHOD);
- gsub("{LOGIN_ENDPOINT}", LOGIN_ENDPOINT);
- print $0;
-}' ${PAGE}-template.html > ${PAGE}.html
+# cheapskate templating
+sed -e "s#{ACTION_ENDPOINT_METHOD}#${PROTECTED_ACTION_ENDPOINT_METHOD}#g" \
+    -e "s#{ACTION_ENDPOINT}#${PROTECTED_ACTION_ENDPOINT}#g" \
+    -e "s#{LOGIN_ENDPOINT}#${LOGIN_ENDPOINT}#g" \
+    ${PAGE}-template.js > ${PAGE}.js
 echo "."
 
-../common.sh ${PAGE}.html
+sed -e '/{CSS}/ {' -e 'r ../common/common.css' -e 'd' -e '}' \
+    -e '/{JS}/ {' -e "r ./${PAGE}.js" -e 'd' -e '}' \
+    ${PAGE}-template.html > ${PAGE}.html
+    
+../common/deploy.sh ${PAGE}.html
 
 echo "ok"

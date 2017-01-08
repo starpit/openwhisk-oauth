@@ -3,250 +3,15 @@
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
     
     <style>
-      body {
-          font-family: "Roboto", sans-serif;
-          margin: 0;
-          -webkit-font-smoothing: antialiased;
-      }
-
-      .header {
-          display: flex;
-          flex-direction: column;
-          color: white;
-          background-color: #1f78b4;
-          font: 16px/24px Roboto, sans-serif;
-          box-shadow: 0 0 4px rgba(0,0,0,.14), 0 4px 8px rgba(0,0,0,.28);
-      }
-      .header-title {
-          display: flex;
-          align-items: center;
-          margin: 6px 0;
-          padding: 0 24px;
-          font-size: 20px;
-      }
-      .header-title-icon {
-          margin: 6px 16px 6px 0;
-          font-size: 150%;
-      }
-      .header-sub {
-          padding: 8px 24px;
-          font-size: 16px;
-      }
-      
-    #providers {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin: 2em 0;
-    }
-    #providers.something-selected .provider-badge:not(.selected) {
-        opacity: 0.4;
-    }
-    #providers.something-selected .provider-badge.selected .sign-in-text, #providers.something-selected .provider-badge:not(.selected) .signed-in-text, #providers:not(.something-selected) .signed-in-text {
-        display: none;
-    }
-    /*.provider-badge.selected {
-        border: 3px solid black;
-        border-top: none;
-        border-bottom: none;
-    }*/
-    #provider-template {
-	display: none;
-    }
-    .provider-badge {
-      display: flex;
-      align-items: center;
-      color: white;
-      padding: 6px;
-      margin: 1em;
-      width: 215px;
-      border-radius: 4px/8px;
-	/*padding: 1em;
-	font-size: 125%;
-	background-color: #e3e3e3;*/
-	transition: all 150ms ease-in-out;
-    }
-    .provider-text {
-      font-size: 0.875rem;
-      margin: 0 24px;
-      flex: 1;
-      text-align: right;
-    }
-    .provider-name {
-	text-transform: capitalize;
-    }
-    .provider.github .provider-badge:hover {
-	-webkit-filter: sepia(1) hue-rotate(120deg);
-	filter: sepia(1) hue-rotate(120deg);
-    }
-    .provider-badge:hover, button:enabled:hover {
-	-webkit-filter: saturate(1.5);
-	filter: saturate(1.5);
-	cursor: pointer;
-    }
-    .status {
-      display: flex;
-      align-items: center;
-      margin: 1em;
-      justify-content: center;
-      font-size: 125%;
-    }
-    #success-mark {
-      display:none;
-      font-size: 250%;
-      margin-right: 0.75rem;
-    }
-    #success-mark.success {
-	color: green;
-    }
-    #success-mark.failure {
-	color: red;
-    }
-
-    .provider .provider-icon {
-	background-size: contain;
-	background-repeat: no-repeat;
-	background-position: center;
-	width: 2em;
-	height: 2em;
-      }
-      .provider.github .provider-badge {
-      background-color: #666;
-      }
-      .provider.google .provider-badge {
-      background-color: #df4a32;
-      }
-    .provider.google .provider-icon {
-      background-image: url(https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Google_plus.svg/2000px-Google_plus.svg.png);
-      /*https://developers.google.com/accounts/images/sign-in-with-google.png);*/
-    }
-    .provider.github .provider-icon {
-        background-image: url(https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg);
-    }
+    {CSS}
     </style>
     
     <script>
-      const providers = {PROVIDERS}
-
-      /** uuid generator */
-      const s4 = () => Math.floor((1 + Math.random()) * 0x10000)
-	    .toString(16)
-	    .substring(1)
-      const guid = () => s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-	    s4() + '-' + s4() + s4() + s4()
-
-      const endpoint = providerName => {
-	  const provider = providers[providerName]
-	  if (!provider) {
-	      return console.error("Unsupported auth provider", providerName)
-	  }
-
-	  //
-	  // this state object will be passed, by the identity provider,
-	  // back to the server-side action
-	  //
-	  // we tag a random transaction id, so that we can fetch the
-	  // server-side response
-	  //
-	  const state = {
-	      providerName: providerName,
-	      tid: `${guid()} ${navigator.userAgent}`
-	  }
-    
-	  //
-	  // format the url that we use to communicate with the identity
-	  // provider
-	  //
-	  const endpoint = `${provider.authorization_endpoint}?client_id=${encodeURIComponent(provider.credentials.client_id)}&redirect_uri=${encodeURIComponent("{LOGIN_ENDPOINT}")}&state=${encodeURIComponent(JSON.stringify(state))}${provider.authorization_endpoint_query||""}`
-
-	  return {
-	      providerName: providerName,
-	      endpoint: endpoint,
-	      tid: state.tid
-	  }
-      }
-
-      /** format query string */
-      const qs = options =>
-            Object.keys(options).reduce((q, key) => q + (q.length == 0 ? "?" : "&") + `${key}=${encodeURIComponent(options[key])}`, "")
-
-	const openAndPollForCompletion = ep => click_evt => {
-	    const currentSelection = document.querySelector("#providers .selected")
-	    if (currentSelection === click_evt.currentTarget) return
-	    
-	    if (currentSelection) currentSelection.setAttribute("class", currentSelection.getAttribute("class").replace(/selected/, ""))
-	    click_evt.currentTarget.setAttribute("class", `${click_evt.currentTarget.getAttribute("class")} selected`)
-	    document.getElementById("providers").setAttribute("class", `${document.getElementById("providers").getAttribute("class")} something-selected`)
-	    
-	  const openedWindow = window.open(ep.endpoint)
-
-	  /**
-	   * The authentication backend is done, finish things up
-	   *
-	   */
-	  const wrapItUp = (successMark, successMarkClass, successMessage, authorization) => {
-	      // decorate this page
-	      document.getElementById("success-mark").innerText = successMark
-	      document.getElementById("success-mark").setAttribute("class", successMarkClass)
-	      document.getElementById("success").innerText = successMessage
-
-	      // close the window that we opened to negotiate with the provider
-	      openedWindow.close()
-
-	      // if we were asked to redirect on completion, do so now
-	      if (window.location.search) {
-		  const key = "redirect_uri="
-		  const idx = window.location.search.indexOf(key)
-		  if (idx >= 0) {
-		      const start = idx + key.length
-		      const end = window.location.search.indexOf("&")
-		      const redirect = window.location.search.substring(start, end == -1 ? window.location.search.length : end)
-		      const payload = authorization === undefined
-			    ? "" :
-			    `${redirect.indexOf("?") >= 0 ? "&" : "?"}authorization=${encodeURIComponent(JSON.stringify(authorization))}`
-		      console.log(start, end, redirect, payload)
-		      window.location = decodeURIComponent(`${redirect}${payload}`)
-		  }
-	      }
-	  }
-
-	    const waitForCompletion = () => {
-		const xhr = new XMLHttpRequest();
-		xhr.onload = () => {
-		    if (xhr.status === 200) {
-			const authorization = JSON.parse(xhr.responseText)
-			wrapItUp("\u2714", "success", "Successfully logged on!", authorization)
-		    } else {
-			console.error(xhr.responseText)
-		    	wrapItUp("\u2715", "failure", "Failed to logged on")
-		    }
-		}
-		xhr.open("POST", "{CHECK_FOR_COMPLETION_ENDPOINT}")
-		xhr.send(JSON.stringify(ep))
-	    }
-	    waitForCompletion()
-	    // poll for completion
-      }
-
-      function init() {
-          const container = document.getElementById("providers")
-          const template = document.getElementById("provider-template")
-
-          for (var providerName in providers) {
-	      const ep = endpoint(providerName)
-
-	      const dom = template.cloneNode(true)
-	      dom.id = ""
-	      dom.setAttribute("class", `${dom.getAttribute("class")} ${providerName.toLowerCase()}`)
-	      container.appendChild(dom)
-	      dom.querySelector(".provider-name").innerText = providerName
-	      dom.querySelector(".provider-badge").onclick = openAndPollForCompletion(ep)
-	  }
-      }
+    {JS}
     </script>
   </head>
   
-  <body onload="init()">
+  <body onload="OpenWhiskOauth.initProviderListView('providers', 'provider-template')">
     <div class="header">
       <span class="header-title">
 	<span class="header-title-icon">&#9729;</span>
@@ -259,7 +24,15 @@
     <div id="provider-template" class="provider">
        <div class="provider-badge">
           <div class="provider-icon"></div>
-          <span class="provider-text"><span class='sign-in-text'>Sign in with</span><span class='signed-in-text'>Signed in with</span> <span class="provider-name"></span></span>
+          <span class="provider-text">
+	    <span class='sign-in-text'>
+	      Sign in with
+	    </span>
+	    <span class='signed-in-text'>
+	      Signed in with
+	    </span>
+	    <span class="provider-name"></span>
+	  </span>
        </div>
     </div>
 
