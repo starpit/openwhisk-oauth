@@ -8,19 +8,16 @@ npm install >& /dev/null
 # set up the package and the login action
 #
 wsk package create "${PACKAGE}" 2>&1 | grep -v "resource already exists"
-wsk action delete "${PACKAGE}/${ACTION}" 2>&1 | grep -v "resource does not exist";
-wsk action create --kind nodejs:6 "${PACKAGE}/${ACTION}" actions/${ACTION}/${ACTION}.js
+wsk action update --kind nodejs:6 "${PACKAGE}/${ACTION}" "actions/${ACTION}/${ACTION}.js"
+
+wsk api-experimental delete "/${PACKAGE}" "/${ACTION}" 2>&1 | grep -v "does not exist"
+wsk api-experimental create "/${PACKAGE}" "/${ACTION}" get "${PACKAGE}/${ACTION}" 2>&1
+LOGIN_ENDPOINT=`wsk api-experimental list "/${PACKAGE}" | grep "${ACTION}" | awk '{print $NF}'`
 
 # have we already done the initial setup?
-wsk api-experimental list "/${PACKAGE}" | grep "${ACTION}"
-if [ $? == 1 ]; then
+if [ ! -f ./providers/conf.json ]; then
     echo "Performing one-time initialization"
-    wsk api-experimental create "/${PACKAGE}" "/${ACTION}" get "${PACKAGE}/${ACTION}" 2>&1 | grep -v "already exists"
-
-    LOGIN_ENDPOINT=`wsk api-experimental list "/${PACKAGE}" | grep "${ACTION}" | awk '{print $NF}'`
     ./bin/setup-providers $LOGIN_ENDPOINT
-else
-    LOGIN_ENDPOINT=`wsk api-experimental list "/${PACKAGE}" | grep "${ACTION}" | awk '{print $NF}'`
 fi
 
 #
