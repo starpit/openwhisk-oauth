@@ -23,7 +23,7 @@ function main(params) {
 	const provider = providers[providerName]
 
 	if (!provider) {
-	    return reject(`Provider not found for providerName ${providerName}`)
+	    return reject({ status: "403", message: "Permission denied" })
 	}
 	
 	console.log(`Using provider ${providerName}`)
