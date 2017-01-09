@@ -35,10 +35,12 @@ echo -n "."
 
 sed -e '/{CSS}/ {' -e 'r ../../common/common.css' -e 'd' -e '}' \
     -e '/{JS/ {' -e "r build/${PAGE}.js" -e 'd' -e '}' \
+    -e "s/{COMPANY}/${1-MyCompany}/g" \
+    -e "s/{PRODUCT}/${2-MyApplication}/g" \
     templates/${PAGE}.html > build/${PAGE}.html
 echo "."
 
 # deploy the assets to objectstore
-../../common/deploy.sh build/${PAGE}.html
+(cd build && ../../../common/deploy.sh ${PAGE}.html)
 
 echo "ok"

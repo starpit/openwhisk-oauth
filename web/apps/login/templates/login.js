@@ -110,7 +110,7 @@ var OpenWhiskOauth = (function() {
 	    dom.setAttribute('class', `${dom.getAttribute('class')} ${providerName.toLowerCase()}`)
 	    container.appendChild(dom)
 	    dom.querySelector('.provider-name').innerText = providerName
-	    dom.querySelector('.provider-badge').onclick = openAndPollForCompletion(ep)
+	    dom.querySelector('.bx--btn').onclick = openAndPollForCompletion(ep)
 	}
     }
 

@@ -1,7 +1,11 @@
 body {
-    font-family: "Roboto", sans-serif;
+    font-family: "Heebo", sans-serif;
     margin: 0;
     -webkit-font-smoothing: antialiased;
+}
+
+main {
+    padding-top: 86px;
 }
 
 .header {
@@ -49,17 +53,7 @@ body {
     display: none;
 }
 .provider-badge {
-    display: flex;
-    align-items: center;
-    color: white;
-    padding: 6px;
     margin: 1em;
-    width: 215px;
-    border-radius: 4px/8px;
-    /*padding: 1em;
-	font-size: 125%;
-	background-color: #e3e3e3;*/
-    transition: all 150ms ease-in-out;
 }
 .provider-text {
     font-size: 0.875rem;
@@ -69,10 +63,6 @@ body {
 }
 .provider-name {
     text-transform: capitalize;
-}
-.provider.github .provider-badge:hover {
-    -webkit-filter: sepia(1) hue-rotate(120deg);
-    filter: sepia(1) hue-rotate(120deg);
 }
 .provider-badge:hover, button:enabled:hover {
 			   -webkit-filter: saturate(1.5);
@@ -105,12 +95,9 @@ body {
     width: 2em;
     height: 2em;
 }
-.provider.github .provider-badge {
-    background-color: #666;
-}
-.provider.google .provider-badge {
+/*.provider.google .provider-badge {
     background-color: #df4a32;
-}
+}*/
 .provider.google .provider-icon {
     background-image: url(https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Google_plus.svg/2000px-Google_plus.svg.png);
     /*https://developers.google.com/accounts/images/sign-in-with-google.png);*/

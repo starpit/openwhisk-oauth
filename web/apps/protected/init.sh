@@ -37,6 +37,6 @@ sed -e '/{CSS}/ {' -e 'r ../../common/common.css' -e 'd' -e '}' \
     -e '/{JS}/ {' -e "r build/${PAGE}.js" -e 'd' -e '}' \
     templates/${PAGE}.html > build/${PAGE}.html
     
-../../common/deploy.sh build/${PAGE}.html
+(cd build && ../../../common/deploy.sh ${PAGE}.html)
 
 echo "ok"

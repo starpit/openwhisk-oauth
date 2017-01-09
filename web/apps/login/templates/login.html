@@ -1,6 +1,8 @@
 <html>
   <head>
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+
+    <link rel="stylesheet" href="//bluemix.net/api/v5/css/common-light.css" media="all">
     
     <style>
     {CSS}
@@ -11,18 +13,16 @@
     </script>
   </head>
   
-  <body onload="OpenWhiskOauth.initProviderListView('providers', 'provider-template')">
-    <div class="header">
-      <span class="header-title">
-	<span class="header-title-icon">&#9729;</span>
-	Login
-      </span>
-      <span class="header-sub">Choose an authentication provider</span>
-    </div>
-    
-    <div id="providers"></div>
-    <div id="provider-template" class="provider">
-       <div class="provider-badge">
+  <body onload="OpenWhiskOauth.initProviderListView('providers', 'provider-template')" class="cloudOEDashboard ace_loggedIn bx--global-light-ui">
+    <nav data-sprite-loader="" role="navigation" class="bx--top-nav" aria-label="Top Header"></nav>    
+    <header class="bx--global-header">
+      <div class="bx--global-header__title"><a href="https://console.ng.bluemix.net/dashboard/apps" class="bx--global-header__title--logo" tabindex="0"><img class="bx--logo__image" src="//bluemix.net/api/v4/img/bluemix-logo-2016-feb.svg" alt="bluemix"><h1 class="bx--logo__text">{COMPANY} <span class="logo__text--bold bluemix-product-title">{PRODUCT}</span></h1></a><h4 class="bx--global-header__title--current-page">Login</h4></div>
+    </header>
+
+    <main class="main" role="main">
+      <div id="providers"></div>
+      <div id="provider-template" class="provider">
+	<div class="bx--btn provider-badge">
           <div class="provider-icon"></div>
           <span class="provider-text">
 	    <span class='sign-in-text'>
@@ -33,12 +33,13 @@
 	    </span>
 	    <span class="provider-name"></span>
 	  </span>
-       </div>
-    </div>
+	</div>
+      </div>
 
-    <div class="status">
-      <span id="success-mark"></span>
-      <span id="success"></span>
-    </div>
+      <div class="status">
+	<span id="success-mark"></span>
+	<span id="success"></span>
+      </div>
+    </main>
   </body>
 </html>
