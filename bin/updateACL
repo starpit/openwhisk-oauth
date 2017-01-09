@@ -29,7 +29,7 @@ const getACL = package => {
     return aclParam.value
 }
 
-if (!OPERATION || !PROVIDER || !USER) {
+if (!OPERATION || (OPERATION !== "list" && (!PROVIDER || !USER))) {
     usage()
     process.exit(1)
 
@@ -52,7 +52,7 @@ if (!OPERATION || !PROVIDER || !USER) {
     const doUpdate =
 	  OPERATION === "add" || OPERATION == "a" ? addToACL
 	  : OPERATION === "delete" || OPERATION === "d" || OPERATION === "remove" || OPERATION === "r" ? removeFromACL
-	  : acl => acl // list it, unmodified
+	  : getACL // list it, unmodified
     
     ow.packages.get( { packageName: config.PACKAGE })
 	.then(doUpdate)
