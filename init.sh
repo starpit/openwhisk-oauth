@@ -25,11 +25,18 @@ fi
 
 #
 # Update the package with the providers configuration
+#    also, since wsk package update overwrites any not-specified key-value pairs, we have
+#          to make sure to keep any ACLs in place!
 #
 PROVIDERS=`cat conf/providers.json`
+ACL=`wsk package get "${PACKAGE}" | grep -v "got package ${PACKAGE}" | jq -c '.parameters[] | select(.key | contains("acl")) .value'`
+if [ $? == 1 ]; then
+    ACL="{}"
+fi
 wsk package update "${PACKAGE}" \
     -p providers "${PROVIDERS}" \
-    -p token_endpoint_form "{ \"redirect_uri\": \"${LOGIN_ENDPOINT}\" }"
+    -p token_endpoint_form "{ \"redirect_uri\": \"${LOGIN_ENDPOINT}\" }" \
+    -p acl "${ACL}"
 
 
 #
