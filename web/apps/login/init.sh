@@ -19,7 +19,13 @@ echo -n "."
 LOGIN_ENDPOINT=`wsk api-experimental list "/${PACKAGE}" | grep "${ACTION}" | awk '{print $NF}'`
 echo -n "."
 
-wsk api-experimental create "/${PACKAGE}" /checkForCompletion post "${PACKAGE}/checkForCompletion" 2>&1 | grep -v "already exists"
+# add a checkForCompletion-with-authz-check
+CFC_WITH_AUTHZ="checkForCompletion-with-authz"
+wsk action update --sequence "${PACKAGE}/${CFC_WITH_AUTHZ}" "${PACKAGE}/checkForCompletion","${PACKAGE}/validate"
+echo -n "."
+
+wsk api-experimental delete "/${PACKAGE}" /checkForCompletion
+wsk api-experimental create "/${PACKAGE}" /checkForCompletion post "${PACKAGE}/${CFC_WITH_AUTHZ}" 2>&1 | grep -v "already exists"
 echo -n "."
 
 CHECK_FOR_COMPLETION_ENDPOINT=`wsk api-experimental list "/${PACKAGE}" | grep checkForCompletion | awk '{print $NF}'`
