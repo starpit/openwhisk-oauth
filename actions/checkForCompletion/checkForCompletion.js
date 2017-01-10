@@ -30,7 +30,8 @@ function main(state) {
 			    // console.log(activationDetails.response.result)
 			    
 			    // all done
-			    return resolve(activationDetails.response.result)
+			    const token = activationDetails.response.result
+			    return resolve(token)
 			}
 		    }
 
