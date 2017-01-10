@@ -6,6 +6,8 @@ var util = require('util')
  *
  */
 function isAuthorized(providerName, user, acl) {
+    console.log("isAuthorized?", providerName, user, acl)
+    
     return !acl
 	|| util.isArray(acl) && acl.find(A => A.user === user && A.provider === providerName)
 	|| acl[`${providerName}:${user}`]
@@ -22,11 +24,11 @@ function main(params) {
 	const providerName = params.provider || params.providerName
 	const provider = providers[providerName]
 
+	console.log(`Using provider ${providerName}`, provider)
+	
 	if (!provider) {
 	    return reject({ status: "403", message: "Permission denied" })
 	}
-	
-	console.log(`Using provider ${providerName}`)
 	
 	request({
 	    url: provider.endpoints.userinfo,
@@ -37,7 +39,11 @@ function main(params) {
 		'User-Agent': 'OpenWhisk'
 	    }
 	}, function(err, response, body) {
-	    console.log("Response from provider", err, response.statusCode)
+	    console.log("Response from provider", err, response.statusCode, body)
+
+	    if (typeof body === "string") {
+		body = JSON.parse(body)
+	    }
 
 	    if (err || response.statusCode != 200) {
 		//
@@ -58,10 +64,14 @@ function main(params) {
 		//
 		// user is validated and authorized!
 		//
-		delete params.provider
-		delete params.providerName
-		delete params.access_token
 		delete params.providers
+		delete params.token_endpoint_form
+		delete params.acl
+
+		// TODO move these to an expunge action
+		// delete params.provider
+		//delete params.providerName
+		//delete params.access_token
 
 		params.authenticated = true
 		resolve(params)
