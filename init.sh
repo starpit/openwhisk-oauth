@@ -15,7 +15,7 @@ wsk api-experimental create "/${PACKAGE}" "/${ACTION}" get "${PACKAGE}/${ACTION}
 LOGIN_ENDPOINT=`wsk api-experimental list "/${PACKAGE}" | grep "${ACTION}" | awk '{print $NF}'`
 
 # have we already done the initial setup?
-if [ ! -f ./providers/conf.json ]; then
+if [ ! -f ./conf/providers.json ]; then
     echo "Performing one-time initialization"
     ./bin/setup-providers $LOGIN_ENDPOINT
 fi
