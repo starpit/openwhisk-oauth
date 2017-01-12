@@ -20,12 +20,12 @@ fi
     -p container public) > /dev/null
 if [ $? == 1 ]; then exit; else echo "Made container ${CONTAINER} readable by everyone"; fi
 
-(wsk action invoke objectstore/createObject -b -r \
+REQ=`wsk action invoke objectstore/createObjectAsReq -b -r \
     -p authToken "${OS_AUTH}" \
     -p objectName $1 \
-    -p data "`base64 $1`" \
-    -p container public)
+    -p container public`
 if [ $? == 1 ]; then exit; else echo "Uploaded content to container ${CONTAINER}"; fi
+node -e "const req = JSON.parse(process.argv[1]); delete req.body; require('fs').createReadStream(\"$1\").pipe(require('request')(req))" "$REQ"
 
 (wsk action invoke objectstore/setContainerMetadata -b -r \
      -p authToken "${OS_AUTH}" \
