@@ -8,9 +8,10 @@ var util = require('util')
 function isAuthorized(providerName, user, acl) {
     console.log("isAuthorized?", providerName, user, acl)
     
-    return !acl
-	|| util.isArray(acl) && acl.find(A => A.user === user && A.provider === providerName)
-	|| acl[`${providerName}:${user}`]
+    return acl &&
+	(acl === "*"
+	 || util.isArray(acl) && acl.find(A => A.user === user && A.provider === providerName)
+	 || acl[`${providerName}:${user}`])
 }
 
 /**
