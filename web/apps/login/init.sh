@@ -31,6 +31,9 @@ echo -n "."
 CHECK_FOR_COMPLETION_ENDPOINT=`wsk api-experimental list "/${PACKAGE}" | grep checkForCompletion | awk '{print $NF}'`
 echo -n "."
 
+if [ ! -d build ]; then
+    mkdir build 
+fi
 
 # cheapskate templating
 sed -e "s#{CHECK_FOR_COMPLETION_ENDPOINT}#${CHECK_FOR_COMPLETION_ENDPOINT}#g" \
