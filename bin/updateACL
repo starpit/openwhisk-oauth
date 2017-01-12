@@ -26,6 +26,9 @@ const getACL = package => {
 	aclParam = { key: "acl", value: {} }
 	package.parameters.push(aclParam)
     }
+    if (!aclParam.value) {
+	aclParam.value = {}
+    }
     return aclParam.value
 }
 
