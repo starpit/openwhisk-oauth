@@ -13,7 +13,7 @@
 PAGE=${PWD##*/}
 
 # holy cow, we need to replace "&" with "\\&", so that awk doesn't treat & as "replace with matching text"
-PROVIDERS="`cat ../../../conf/providers-client.json | tr -d '\n' | sed 's/&/\\\\\\\&/g'`"
+PROVIDERS="`cat ../../../conf/providers-client.json | tr -d '\n' | sed 's/&/\\\\\\&/g'`"
 echo -n "."
 
 LOGIN_ENDPOINT=`wsk api-experimental list "/${PACKAGE}" | grep "${ACTION}" | awk '{print $NF}'`
@@ -24,9 +24,9 @@ CFC_WITH_AUTHZ="checkForCompletion-with-authz"
 wsk action update --sequence "${PACKAGE}/${CFC_WITH_AUTHZ}" "${PACKAGE}/checkForCompletion","${PACKAGE}/validate"
 echo -n "."
 
-wsk api-experimental delete "/${PACKAGE}" /checkForCompletion
-wsk api-experimental create "/${PACKAGE}" /checkForCompletion post "${PACKAGE}/${CFC_WITH_AUTHZ}" 2>&1 | grep -v "already exists"
-echo -n "."
+#wsk api-experimental delete "/${PACKAGE}" /checkForCompletion
+#wsk api-experimental create "/${PACKAGE}" /checkForCompletion post "${PACKAGE}/${CFC_WITH_AUTHZ}" 2>&1 | grep -v "already exists"
+#echo -n "."
 
 CHECK_FOR_COMPLETION_ENDPOINT=`wsk api-experimental list "/${PACKAGE}" | grep checkForCompletion | awk '{print $NF}'`
 echo -n "."
