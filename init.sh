@@ -49,3 +49,8 @@ for dir in actions/*/; do
        wsk action create --kind nodejs:6 "${PACKAGE}/${action}" "${dir}/${action}.js"
     fi
 done
+
+CFC_WITH_AUTHZ="checkForCompletion-with-authz"
+wsk action update --sequence "${PACKAGE}/${CFC_WITH_AUTHZ}" "${PACKAGE}/checkForCompletion","${PACKAGE}/validate"
+wsk api-experimental delete "/${PACKAGE}" /checkForCompletion 2>&1 | grep -v "does not exist"
+wsk api-experimental create "/${PACKAGE}" /checkForCompletion post "${PACKAGE}/${CFC_WITH_AUTHZ}" 2>&1 | grep -v "already exists"
