@@ -11,7 +11,7 @@ if [ "$2" == "--deploy-only" ]; then
 fi
 
 if [ -z "$DEPLOY_ONLY" ]; then
-    echo "Deploying `basename $1`"
+    (>&2 echo "Deploying `basename $1`")
 
     wsk action invoke objectstore/listContainers -b -r -p authToken "${OS_AUTH}" | grep ${CONTAINER} > /dev/null
     if [ $? == 1 ]; then
@@ -19,19 +19,19 @@ if [ -z "$DEPLOY_ONLY" ]; then
 	     -p authToken "${OS_AUTH}" \
 	     -p container ${CONTAINER}) > /dev/null
 
-	if [ $? == 1 ]; then exit; else echo "Created container ${CONTAINER}"; fi
+	if [ $? == 1 ]; then exit; else (>&2 echo "Created container ${CONTAINER}"); fi
     fi
 
     (wsk action invoke objectstore/setContainerPublic -b -r \
 	 -p authToken "${OS_AUTH}" \
 	 -p container public) > /dev/null
-    if [ $? == 1 ]; then exit; else echo "Made container ${CONTAINER} readable by everyone"; fi
+    if [ $? == 1 ]; then exit; else (>&2 echo "Made container ${CONTAINER} readable by everyone"); fi
 
     (wsk action invoke objectstore/setContainerMetadata -b -r \
 	 -p authToken "${OS_AUTH}" \
 	 -p container ${CONTAINER} \
 	 -p metadata  "{\"Access-Control-Allow-Origin\": \"*\", \"Access-Control-Expose-Headers\": \"content-type\"}") > /dev/null
-    if [ $? == 1 ]; then exit; else echo "Added CORS to container ${CONTAINER}"; fi
+    if [ $? == 1 ]; then exit; else (>&2 echo "Added CORS to container ${CONTAINER}"); fi
 fi
 
 REQ=`wsk action invoke objectstore/createObjectAsReq -b -r \
