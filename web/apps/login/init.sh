@@ -16,20 +16,26 @@ PAGE=${PWD##*/}
 PROVIDERS="`cat ../../../conf/providers-client.json | tr -d '\n' | sed 's/&/\\\\\\&/g'`"
 echo -n "."
 
-LOGIN_ENDPOINT=`wsk api-experimental list "/${PACKAGE}" | grep "${ACTION}" | awk '{print $NF}'`
-echo -n "."
+if [ -f ../../../conf/endpoints.sh ]; then
+    . ../../../conf/endpoints.sh
+fi
+
+if [ -z "${LOGIN_ENDPOINT}" ]; then
+    LOGIN_ENDPOINT=`wsk api-experimental list "/${PACKAGE}" | grep "${ACTION}" | awk '{print $NF}'`
+    echo -n "."
 
 # add a checkForCompletion-with-authz-check
-CFC_WITH_AUTHZ="checkForCompletion-with-authz"
-wsk action update --sequence "${PACKAGE}/${CFC_WITH_AUTHZ}" "${PACKAGE}/checkForCompletion","${PACKAGE}/validate"
-echo -n "."
+    CFC_WITH_AUTHZ="checkForCompletion-with-authz"
+    wsk action update --sequence "${PACKAGE}/${CFC_WITH_AUTHZ}" "${PACKAGE}/checkForCompletion","${PACKAGE}/validate"
+    echo -n "."
 
 #wsk api-experimental delete "/${PACKAGE}" /checkForCompletion
 #wsk api-experimental create "/${PACKAGE}" /checkForCompletion post "${PACKAGE}/${CFC_WITH_AUTHZ}" 2>&1 | grep -v "already exists"
 #echo -n "."
 
-CHECK_FOR_COMPLETION_ENDPOINT=`wsk api-experimental list "/${PACKAGE}" | grep checkForCompletion | awk '{print $NF}'`
-echo -n "."
+    CHECK_FOR_COMPLETION_ENDPOINT=`wsk api-experimental list "/${PACKAGE}" | grep checkForCompletion | awk '{print $NF}'`
+    echo -n "."
+fi
 
 if [ ! -d build ]; then
     mkdir build 
