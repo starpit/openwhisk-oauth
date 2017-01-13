@@ -50,6 +50,7 @@ sed -e '/{CSS}/ {' -e 'r ../../common/common.css' -e 'd' -e '}' \
 echo "."
 
 # deploy the assets to objectstore
+npm install
 (cd build && ../../../common/deploy.sh ${PAGE}.html)
 
 echo "ok"
