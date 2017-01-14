@@ -45,10 +45,11 @@ wsk package update "${PACKAGE}" \
 for dir in actions/*/; do
     action=$(basename "$dir")
     if [ "${action}" != "login" ]; then
-       wsk action delete "${PACKAGE}/${action}" 2>&1 | grep -v "resource does not exist"
-       wsk action create --kind nodejs:6 "${PACKAGE}/${action}" "${dir}/${action}.js"
+       wsk action update --kind nodejs:6 "${PACKAGE}/${action}" "${dir}/${action}.js" &
     fi
 done
+
+wait
 
 CFC_WITH_AUTHZ="checkForCompletion-with-authz"
 wsk action update --sequence "${PACKAGE}/${CFC_WITH_AUTHZ}" "${PACKAGE}/checkForCompletion","${PACKAGE}/validate"
