@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+
+if [ -f ./conf/config.sh ]; then
+   . ./conf/config.sh
+else
+   PACKAGE=`wsk action list --limit 200 | grep "checkForCompletion " | awk '{split($1,A,"/"); print A[3]}'`
+fi
+
+if [ -z "$PACKAGE" ]; then	
+   echo "Can't find package"
+   exit 1
+fi
+
+echo "Updating $PACKAGE"
+
+PROVIDERS=`cat $1`
+
+echo "Fetching ACL"
+ACL=`wsk package get "${PACKAGE}" | grep -v "got package ${PACKAGE}" | jq -c '.parameters[] | select(.key | contains("acl")) .value'`
+if [ $? == 1 ]; then
+    ACL="{}"
+fi
+
+echo "Fetching TEF"
+TOKEN_ENDPOINT_FORM=`wsk package get "${PACKAGE}" | grep -v "got package ${PACKAGE}" | jq -c '.parameters[] | select(.key | contains("token_endpoint_form")) .value'`
+
+echo "Updating ${PACKAGE} package"
+wsk package update "${PACKAGE}" \
+    -p providers "${PROVIDERS}" \
+    -p token_endpoint_form "${TOKEN_ENDPOINT_FORM}" \
+    -p acl "${ACL}"
+
