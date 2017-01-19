@@ -38,3 +38,10 @@ for dir in actions/*/; do
 done
 
 wait
+
+
+#
+# checkForCompletion, with authorization check!
+#
+CFC_WITH_AUTHZ="checkForCompletion-with-authz"
+wsk action update --sequence "${PACKAGE}/${CFC_WITH_AUTHZ}" "${PACKAGE}/checkForCompletion","${PACKAGE}/validate"
