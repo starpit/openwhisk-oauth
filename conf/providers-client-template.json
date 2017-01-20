@@ -8,7 +8,7 @@
 
     "slack": {
 	"authorization_endpoint": "https://slack.com/oauth/authorize",
-        "authorization_endpoint_query": "&scope=chat:write:bot",
+        "authorization_endpoint_query": "&scope=identify",
 	"credentials": {
 	    "client_id": "xxxxxxxxx",
 	}
