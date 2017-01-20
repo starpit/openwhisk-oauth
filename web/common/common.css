@@ -34,6 +34,7 @@ main {
 
 #providers {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     margin: 2em 0;
@@ -104,4 +105,7 @@ main {
 }
 .provider.github .provider-icon {
     background-image: url(https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg);
+}
+.provider.slack .provider-icon {
+    background-image: url(https://upload.wikimedia.org/wikipedia/commons/7/76/Slack_Icon.png);
 }
