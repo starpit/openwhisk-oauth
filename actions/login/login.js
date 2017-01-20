@@ -85,7 +85,7 @@ function main(params) {
 		// for account handle
 		//
 		request({
-		    url: provider.endpoints.userinfo,
+		    url: provider.endpoints.userinfo + (provider.token_as_query ? `?${provider.token_as_query}=${body.access_token}` : ''),
 		    method: 'GET',
 		    headers: {
 			'Accept': 'application/json',
@@ -106,7 +106,7 @@ function main(params) {
 			    body2 = JSON.parse(body2);
 			}
 
-			// console.log("PROFILE RESPONSE", body2)
+			// console.log("Profile Response", body2)
 
 			resolve({
 			    tid: state && state.tid, // transaction id, so the client knows when we're done

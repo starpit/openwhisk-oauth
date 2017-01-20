@@ -32,7 +32,7 @@ function main(params) {
 	}
 	
 	request({
-	    url: provider.endpoints.userinfo,
+	    url: provider.endpoints.userinfo + (provider.token_as_query ? `?${provider.token_as_query}=${params.access_token}` : ''),
 	    method: 'GET',
 	    headers: {
 		'Accept': 'application/json',
