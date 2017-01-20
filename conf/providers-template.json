@@ -15,6 +15,22 @@
 	    "client_secret": "xxxxxxxxx"
 	}
     },
+
+    "slack": {
+	"endpoints": {
+	    "new_oauth_app": "https://api.slack.com/apps",
+	    "authorization": "https://slack.com/oauth/authorize",
+	    "token": "https://slack.com/api/oauth.access"
+	    "userinfo": "https://slack.com/api/auth.test"
+	},
+	
+	"token_endpoint_form_as_query": true,
+
+	"credentials": {
+	    "client_id": "xxxxxxxxx",
+	    "client_secret": "xxxxxxxxx"
+	}
+    },
     
     "google": {
 	"endpoints": {
