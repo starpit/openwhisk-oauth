@@ -113,7 +113,9 @@ function main(params) {
 			    
 			    provider: providerName,
 			    access_token: body.access_token,
-			    id: body2[provider.userinfo_identifier]
+			    id: body2[provider.userinfo_identifier],
+
+			    access_token_body: body
 			});
 		    }
 		});
