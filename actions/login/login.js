@@ -115,7 +115,8 @@ function main(params) {
 			    access_token: body.access_token,
 			    id: body2[provider.userinfo_identifier],
 
-			    access_token_body: body
+			    access_token_body: body,
+			    state: params.state
 			});
 		    }
 		});
