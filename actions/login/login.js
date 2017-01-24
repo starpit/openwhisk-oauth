@@ -116,7 +116,7 @@ function main(params) {
 			    id: body2[provider.userinfo_identifier],
 
 			    access_token_body: body,
-			    state: params.state
+			    state: state
 			});
 		    }
 		});
