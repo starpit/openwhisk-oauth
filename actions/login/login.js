@@ -60,6 +60,13 @@ function main(params) {
 	    options.form = form;
 	}
 
+	if (provider.token_endpoint_needs_auth) {
+	    options.auth = {
+		user: form.client_id,
+		pass: form.client_secret
+	    }
+	}
+
 	//
 	// ok, here we go, exchanging the oauth code for an access_token
 	//
