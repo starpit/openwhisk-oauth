@@ -8,7 +8,7 @@ function main(state) {
     const pollForCompletion = (tid, since) => new Promise((resolve, reject) => {
 	// console.log('Polling initiated', since)
 	
-	const waitForThisAction = 'login'
+	const waitForThisAction = state.waitForThisAction || 'login'
 
 	const pollOnce = iter => {
 	    try {
