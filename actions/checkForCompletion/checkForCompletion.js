@@ -15,7 +15,7 @@ function main(state) {
 		// console.log('Polling once', iter)
 
 		if (iter > 25) {
- 		    reject({ status: 'error', reason: 'timeout', params: state })
+ 		    reject({ status: 'error', reason: 'timeout' })
 		}
 
 		ow.activations.list({ limit: 5, name: waitForThisAction, since: since, docs: true }).then(list => {
