@@ -121,6 +121,7 @@ function main(params) {
 			    provider: providerName,
 			    access_token: body.access_token,
 			    id: body2[provider.userinfo_identifier],
+			    idRecord: provider.userinfo_identifier_full_record && body2,
 
 			    access_token_body: body,
 			    state: state
