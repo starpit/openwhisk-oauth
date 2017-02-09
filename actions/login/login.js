@@ -116,8 +116,6 @@ function main(params) {
 			// console.log("Profile Response", body2)
 
 			resolve({
-			    tid: state && state.tid, // transaction id, so the client knows when we're done
-			    
 			    provider: providerName,
 			    access_token: body.access_token,
 			    id: body2[provider.userinfo_identifier],

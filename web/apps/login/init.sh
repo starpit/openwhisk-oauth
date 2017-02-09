@@ -21,10 +21,8 @@ if [ -f ../../../conf/endpoints.sh ]; then
 fi
 
 if [ -z "${LOGIN_ENDPOINT}" ]; then
-    LOGIN_ENDPOINT=`wsk api-experimental list "/${PACKAGE}" | grep "${ACTION}" | awk '{print $NF}'`
-    echo -n "."
-
-    CHECK_FOR_COMPLETION_ENDPOINT=`wsk api-experimental list "/${PACKAGE}" | grep checkForCompletion | awk '{print $NF}'`
+    WSK_NAMESPACE=`node -e '{C=require(process.argv[1]); console.log(C.OrganizationFields.Name + "_" + C.SpaceFields.Name) }' ~/.cf/config.json`
+    LOGIN_ENDPOINT="https://openwhisk.ng.bluemix.net/api/v1/experimental/web/${WSK_NAMESPACE}/oauth/web-login.http"
     echo -n "."
 fi
 
@@ -33,8 +31,7 @@ if [ ! -d build ]; then
 fi
 
 # cheapskate templating
-sed -e "s#{CHECK_FOR_COMPLETION_ENDPOINT}#${CHECK_FOR_COMPLETION_ENDPOINT}#g" \
-    -e "s#{PROVIDERS}#${PROVIDERS}#g" \
+sed -e "s#{PROVIDERS}#${PROVIDERS}#g" \
     -e "s#{LOGIN_ENDPOINT}#${LOGIN_ENDPOINT}#g" \
     templates/${PAGE}.js > build/${PAGE}.js
 echo -n "."
