@@ -22,9 +22,21 @@ var OpenWhiskOauth = (function() {
 	// server-side response
 	//
 	const state = {
-	    providerName: providerName,
-	    tid: `${guid()} ${navigator.userAgent}`
+	    providerName: providerName
 	}
+
+	// if we were asked to redirect on completion, do so now
+	if (window.location.search) {
+		const key = 'redirect_uri='
+		const idx = window.location.search.indexOf(key)
+		if (idx >= 0) {
+		    const start = idx + key.length
+		    const end = window.location.search.indexOf('&')
+		    const redirect = window.location.search.substring(start, end == -1 ? window.location.search.length : end)
+		    const payload = ''
+		    state.redirect_uri = decodeURIComponent(`${redirect}${payload}`)
+		}
+	    }
 	
 	//
 	// format the url that we use to communicate with the identity
@@ -34,8 +46,7 @@ var OpenWhiskOauth = (function() {
 
 	return {
 	    providerName: providerName,
-	    endpoint: endpoint,
-	    tid: state.tid
+	    endpoint: endpoint
 	}
     }
 
@@ -46,7 +57,10 @@ var OpenWhiskOauth = (function() {
 	if (currentSelection) currentSelection.setAttribute('class', currentSelection.getAttribute('class').replace(/selected/, ''))
 	click_evt.currentTarget.setAttribute('class', `${click_evt.currentTarget.getAttribute('class')} selected`)
 	document.getElementById('providers').setAttribute('class', `${document.getElementById('providers').getAttribute('class')} something-selected`)
-	
+
+	window.location.href = ep.endpoint
+	return
+
 	const openedWindow = window.open(ep.endpoint)
 
 	/**
@@ -62,21 +76,7 @@ var OpenWhiskOauth = (function() {
 	    // close the window that we opened to negotiate with the provider
 	    openedWindow.close()
 
-	    // if we were asked to redirect on completion, do so now
-	    if (window.location.search) {
-		const key = 'redirect_uri='
-		const idx = window.location.search.indexOf(key)
-		if (idx >= 0) {
-		    const start = idx + key.length
-		    const end = window.location.search.indexOf('&')
-		    const redirect = window.location.search.substring(start, end == -1 ? window.location.search.length : end)
-		    const payload = authorization === undefined
-			  ? '' :
-			  `${redirect.indexOf('?') >= 0 ? '&' : '?'}authorization=${encodeURIComponent(JSON.stringify(authorization))}`
-		    console.log(start, end, redirect, payload)
-		    window.location = decodeURIComponent(`${redirect}${payload}`)
-		}
-	    }
+
 	}
 
 	const waitForCompletion = () => {
