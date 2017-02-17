@@ -47,5 +47,3 @@ wait
 #
 #CFC_WITH_AUTHZ="checkForCompletion-with-authz"
 #$WSK action update --sequence "${PACKAGE}/${CFC_WITH_AUTHZ}" "${PACKAGE}/checkForCompletion","${PACKAGE}/validate"
-
-wsk action update --sequence ${PACKAGE}/web-login ${PACKAGE}/login,${PACKAGE}/validate,${PACKAGE}/redirect -a web-export true

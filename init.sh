@@ -22,6 +22,8 @@ fi
 
 ./init-actions.sh
 
+wsk action update --sequence ${PACKAGE}/web-login ${PACKAGE}/login,${PACKAGE}/validate,${PACKAGE}/redirect -a web-export true
+
 #CFC_WITH_AUTHZ="checkForCompletion-with-authz"
 #$WSK action update ${PACKAGE}/${CFC_WITH_AUTHZ} -a web-export true
 #$WSK api-experimental delete "/${PACKAGE}" /checkForCompletion 2>&1 | grep -v "does not exist"
