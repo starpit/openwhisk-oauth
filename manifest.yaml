@@ -1,0 +1,20 @@
+package:
+  name: oauth
+  description: oauth support for OpenWhisk
+  actions:
+    login:
+      location: actions/login/login.js
+      runtime: nodejs:6
+    checkForCompletion:
+      location: actions/checkForCompletion/checkForCompletion.js
+      runtime: nodejs:6
+    redirect:
+      location: actions/redirect/redirect.js
+      runtime: nodejs:6
+    validate:
+      location: actions/validate/validate.js
+      runtime: nodejs:6
+  inputs:
+    providers: $PROVIDERS
+    token_endpoint_form: $REDIRECT_URI
+    acl: $ACL
